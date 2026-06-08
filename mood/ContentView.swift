@@ -15,10 +15,12 @@ struct MoodEntry: Identifiable, Codable {
 
 @Observable
 final class MoodStore {
+    static let shared = MoodStore()
+
     private(set) var entries: [MoodEntry] = []
     private let fileURL: URL
 
-    init() {
+    private init() {
         let directory = URL.applicationSupportDirectory
             .appending(path: Bundle.main.bundleIdentifier ?? "mood")
         try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
@@ -44,7 +46,7 @@ final class MoodStore {
 }
 
 struct ContentView: View {
-    @State private var store = MoodStore()
+    private let store = MoodStore.shared
     @State private var mood: String = ""
 
     var body: some View {
