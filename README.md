@@ -1,5 +1,7 @@
 # mood
 
+<img width="1440" height="900" alt="Screenshot 2026-06-08 at 8 04 40 PM" src="https://github.com/user-attachments/assets/68d0f8c6-8011-48f0-b934-dcd1c11a1129" />
+
 A minimal macOS journaling app for tracking how you feel throughout the day. Built with SwiftUI.
 
 ## Features
