@@ -83,30 +83,56 @@ enum SidebarSection: Hashable, CaseIterable {
     }
 }
 
-private struct SidebarTag: Identifiable {
-    let id = UUID()
-    let name: String
-    let color: Color
+enum SidebarFilter: Hashable {
+    case section(SidebarSection)
+    case tag(String)
 }
 
-private let sidebarTags: [SidebarTag] = [
-    .init(name: "work", color: Color(red: 0.93, green: 0.55, blue: 0.32)),
-    .init(name: "personal", color: Color(red: 0.84, green: 0.36, blue: 0.36)),
-    .init(name: "health", color: Color(red: 0.48, green: 0.66, blue: 0.45)),
-    .init(name: "creative", color: Color(red: 0.86, green: 0.72, blue: 0.36)),
+// MARK: - Tag helpers
+
+private let tagRegex = /#([A-Za-z0-9_]+)/
+
+func extractTags(from text: String) -> [String] {
+    text.matches(of: tagRegex).map { String($0.output.1).lowercased() }
+}
+
+func bodyWithoutTags(_ text: String) -> String {
+    text.replacing(tagRegex, with: "")
+        .replacing(/\s+/, with: " ")
+        .trimmingCharacters(in: .whitespacesAndNewlines)
+}
+
+private let tagPalette: [Color] = [
+    Color(red: 0.93, green: 0.55, blue: 0.32), // orange
+    Color(red: 0.84, green: 0.36, blue: 0.36), // red
+    Color(red: 0.48, green: 0.66, blue: 0.45), // green
+    Color(red: 0.86, green: 0.72, blue: 0.36), // yellow
+    Color(red: 0.45, green: 0.55, blue: 0.78), // blue
+    Color(red: 0.70, green: 0.48, blue: 0.72), // purple
 ]
+
+func colorForTag(_ name: String) -> Color {
+    let sum = name.unicodeScalars.reduce(0) { $0 + Int($1.value) }
+    return tagPalette[sum % tagPalette.count]
+}
 
 // MARK: - Root
 
 struct ContentView: View {
     private let store = MoodStore.shared
-    @State private var selectedSection: SidebarSection = .allEntries
+    @State private var filter: SidebarFilter = .section(.allEntries)
+    @State private var calendarDate: Date = Date()
     @State private var draft: String = ""
 
     var body: some View {
         HStack(spacing: 0) {
-            Sidebar(selected: $selectedSection, entryCount: store.entries.count)
-                .frame(width: 200)
+            Sidebar(
+                filter: $filter,
+                calendarDate: $calendarDate,
+                allTags: allTags,
+                entryCount: store.entries.count
+            )
+            .frame(width: 220)
 
             Rectangle()
                 .fill(Color.mutedLine)
@@ -115,12 +141,41 @@ struct ContentView: View {
             VStack(spacing: 0) {
                 Composer(draft: $draft, onLog: log)
                 Rectangle().fill(Color.mutedLine).frame(height: 1)
-                EntriesList(entries: store.entries)
+                EntriesList(
+                    entries: filteredEntries,
+                    filter: filter,
+                    calendarDate: calendarDate
+                )
             }
             .background(Color.appBackground)
         }
         .frame(minWidth: 900, minHeight: 600)
         .preferredColorScheme(.light)
+    }
+
+    private var allTags: [String] {
+        var seen: Set<String> = []
+        var ordered: [String] = []
+        for entry in store.entries {
+            for tag in extractTags(from: entry.mood) where seen.insert(tag).inserted {
+                ordered.append(tag)
+            }
+        }
+        return ordered.sorted()
+    }
+
+    private var filteredEntries: [MoodEntry] {
+        let cal = Calendar.current
+        switch filter {
+        case .section(.today):
+            return store.entries.filter { cal.isDateInToday($0.date) }
+        case .section(.calendar):
+            return store.entries.filter { cal.isDate($0.date, inSameDayAs: calendarDate) }
+        case .section(.allEntries), .section(.trends):
+            return store.entries
+        case .tag(let name):
+            return store.entries.filter { extractTags(from: $0.mood).contains(name) }
+        }
     }
 
     private func log() {
@@ -134,7 +189,9 @@ struct ContentView: View {
 // MARK: - Sidebar
 
 private struct Sidebar: View {
-    @Binding var selected: SidebarSection
+    @Binding var filter: SidebarFilter
+    @Binding var calendarDate: Date
+    let allTags: [String]
     let entryCount: Int
 
     var body: some View {
@@ -145,24 +202,45 @@ private struct Sidebar: View {
                 SidebarRow(
                     title: section.title,
                     icon: section.icon,
-                    selected: selected == section
+                    selected: filter == .section(section)
                 ) {
-                    selected = section
+                    filter = .section(section)
+                }
+
+                if section == .calendar && filter == .section(.calendar) {
+                    MiniCalendar(selected: $calendarDate)
+                        .padding(.horizontal, 12)
+                        .padding(.top, 4)
+                        .padding(.bottom, 10)
                 }
             }
 
-            SectionHeader(title: "TAGS", trailing: "+")
+            SectionHeader(title: "TAGS", trailing: allTags.isEmpty ? nil : "\(allTags.count)")
 
-            ForEach(sidebarTags) { tag in
-                HStack(spacing: 10) {
-                    Circle().fill(tag.color).frame(width: 7, height: 7)
-                    Text(tag.name)
-                        .font(.system(size: 12))
-                        .foregroundStyle(Color.primaryText)
-                    Spacer()
+            if allTags.isEmpty {
+                Text("Type #tags in your entries")
+                    .font(.system(size: 11))
+                    .foregroundStyle(Color.secondaryText)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 4)
+            } else {
+                ForEach(allTags, id: \.self) { tag in
+                    Button {
+                        filter = .tag(tag)
+                    } label: {
+                        HStack(spacing: 10) {
+                            Circle().fill(colorForTag(tag)).frame(width: 7, height: 7)
+                            Text(tag)
+                                .font(.system(size: 12))
+                                .foregroundStyle(Color.primaryText)
+                            Spacer()
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 5)
+                        .background(filter == .tag(tag) ? Color.selectionFill : Color.clear)
+                    }
+                    .buttonStyle(.plain)
                 }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 5)
             }
 
             Spacer()
@@ -222,6 +300,113 @@ private struct SidebarRow: View {
     }
 }
 
+private struct MiniCalendar: View {
+    @Binding var selected: Date
+    @State private var month: Date = Date()
+
+    private let calendar = Calendar.current
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 6) {
+                Text(month, format: .dateTime.month(.wide).year())
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(Color.primaryText)
+                Spacer()
+                navButton(systemImage: "chevron.left") { shiftMonth(-1) }
+                navButton(systemImage: "chevron.right") { shiftMonth(1) }
+            }
+
+            HStack(spacing: 0) {
+                ForEach(weekdaySymbols, id: \.self) { symbol in
+                    Text(symbol)
+                        .font(.system(size: 9, weight: .medium, design: .monospaced))
+                        .foregroundStyle(Color.secondaryText)
+                        .frame(maxWidth: .infinity)
+                }
+            }
+
+            VStack(spacing: 2) {
+                ForEach(0..<numberOfRows, id: \.self) { row in
+                    HStack(spacing: 2) {
+                        ForEach(0..<7, id: \.self) { col in
+                            let index = row * 7 + col
+                            cell(at: index)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private func navButton(systemImage: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: systemImage)
+                .font(.system(size: 9, weight: .medium))
+                .foregroundStyle(Color.secondaryText)
+                .frame(width: 16, height: 16)
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var weekdaySymbols: [String] {
+        calendar.shortWeekdaySymbols.map { String($0.prefix(2)) }
+    }
+
+    private var monthStart: Date {
+        calendar.date(from: calendar.dateComponents([.year, .month], from: month)) ?? month
+    }
+
+    private var leadingBlanks: Int {
+        let weekday = calendar.component(.weekday, from: monthStart) // 1 = Sun
+        return weekday - calendar.firstWeekday
+    }
+
+    private var daysInMonth: Int {
+        calendar.range(of: .day, in: .month, for: monthStart)?.count ?? 30
+    }
+
+    private var numberOfRows: Int {
+        Int(ceil(Double(leadingBlanks + daysInMonth) / 7.0))
+    }
+
+    @ViewBuilder
+    private func cell(at index: Int) -> some View {
+        let dayIndex = index - leadingBlanks
+        if dayIndex < 0 || dayIndex >= daysInMonth {
+            Text("")
+                .frame(maxWidth: .infinity, minHeight: 20)
+        } else {
+            let date = calendar.date(byAdding: .day, value: dayIndex, to: monthStart) ?? monthStart
+            let isSelected = calendar.isDate(date, inSameDayAs: selected)
+            let isToday = calendar.isDateInToday(date)
+
+            Button {
+                selected = date
+            } label: {
+                Text("\(calendar.component(.day, from: date))")
+                    .font(.system(size: 11, design: .monospaced))
+                    .foregroundStyle(isSelected ? .white : Color.primaryText)
+                    .frame(maxWidth: .infinity, minHeight: 20)
+                    .background(
+                        Group {
+                            if isSelected {
+                                RoundedRectangle(cornerRadius: 4).fill(Color.primaryText)
+                            } else if isToday {
+                                RoundedRectangle(cornerRadius: 4).stroke(Color.primaryText.opacity(0.35), lineWidth: 1)
+                            }
+                        }
+                    )
+            }
+            .buttonStyle(.plain)
+        }
+    }
+
+    private func shiftMonth(_ delta: Int) {
+        month = calendar.date(byAdding: .month, value: delta, to: month) ?? month
+    }
+}
+
 private struct UserCard: View {
     let name: String
     let subtitle: String
@@ -261,6 +446,8 @@ private struct Composer: View {
     let onLog: () -> Void
 
     @State private var now: Date = Date()
+    @State private var transcriber = SpeechTranscriber()
+    @State private var draftBeforeRecording: String = ""
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -281,6 +468,18 @@ private struct Composer: View {
                     .foregroundStyle(Color.primaryText)
                     .lineLimit(1...5)
                     .onSubmit(onLog)
+
+                Button(action: toggleRecording) {
+                    Image(systemName: micIcon)
+                        .font(.system(size: 14))
+                        .foregroundStyle(micColor)
+                        .frame(width: 28, height: 28)
+                        .background(
+                            Circle().fill(transcriber.state == .recording ? Color.red.opacity(0.12) : Color.clear)
+                        )
+                }
+                .buttonStyle(.plain)
+                .help(micHelp)
             }
 
             HStack(spacing: 8) {
@@ -323,13 +522,51 @@ private struct Composer: View {
                 try? await Task.sleep(for: .seconds(1))
             }
         }
+        .onChange(of: transcriber.transcript) { _, newValue in
+            guard transcriber.state == .recording else { return }
+            let separator = draftBeforeRecording.isEmpty ? "" : " "
+            draft = draftBeforeRecording + separator + newValue
+        }
     }
 
     private var statusText: String {
+        if transcriber.state == .recording { return "Listening…" }
+        if transcriber.state == .denied { return "Mic permission needed" }
+        if transcriber.state == .unavailable { return "Speech unavailable" }
         let trimmed = draft.trimmingCharacters(in: .whitespacesAndNewlines)
         if trimmed.isEmpty { return "Nothing to save" }
         let words = trimmed.split { $0.isWhitespace }.count
         return "\(words) word\(words == 1 ? "" : "s") to save"
+    }
+
+    private var micIcon: String {
+        transcriber.state == .recording ? "stop.circle.fill" : "mic"
+    }
+
+    private var micColor: Color {
+        switch transcriber.state {
+        case .recording: .red
+        case .denied, .unavailable: Color.secondaryText.opacity(0.5)
+        case .idle: Color.secondaryText
+        }
+    }
+
+    private var micHelp: String {
+        switch transcriber.state {
+        case .recording: "Stop recording"
+        case .denied: "Allow microphone access in System Settings"
+        case .unavailable: "Speech recognition unavailable"
+        case .idle: "Dictate your entry"
+        }
+    }
+
+    private func toggleRecording() {
+        if transcriber.state == .recording {
+            transcriber.stop()
+        } else {
+            draftBeforeRecording = draft
+            Task { await transcriber.start() }
+        }
     }
 }
 
@@ -348,6 +585,8 @@ private struct Triangle: Shape {
 
 private struct EntriesList: View {
     let entries: [MoodEntry]
+    let filter: SidebarFilter
+    let calendarDate: Date
 
     private var groups: [(label: String, items: [MoodEntry])] {
         let cal = Calendar.current
@@ -358,6 +597,27 @@ private struct EntriesList: View {
             .map { day, items in
                 (dayLabel(for: day, now: now), items.sorted { $0.date > $1.date })
             }
+    }
+
+    private var headerTitle: String {
+        switch filter {
+        case .section(.calendar):
+            return calendarDate.formatted(.dateTime.month(.wide).day().year()).uppercased()
+        case .section(let s):
+            return s.title.uppercased()
+        case .tag(let name):
+            return "#\(name.uppercased())"
+        }
+    }
+
+    private var emptyMessage: String {
+        switch filter {
+        case .section(.today): "Nothing logged today yet."
+        case .section(.allEntries): "No entries yet. Start writing above or press ⌃⌥M from anywhere."
+        case .section(.calendar): "Nothing logged on this day."
+        case .section(.trends): "Nothing here yet."
+        case .tag(let name): "No entries tagged #\(name)."
+        }
     }
 
     private func dayLabel(for date: Date, now: Date) -> String {
@@ -374,7 +634,7 @@ private struct EntriesList: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 HStack(spacing: 8) {
-                    Text("ALL ENTRIES")
+                    Text(headerTitle)
                         .font(.system(size: 10, weight: .semibold))
                         .tracking(0.8)
                         .foregroundStyle(Color.secondaryText)
@@ -392,7 +652,7 @@ private struct EntriesList: View {
                 )
 
                 if entries.isEmpty {
-                    Text("No entries yet. Start writing above or press ⌃⌥M from anywhere.")
+                    Text(emptyMessage)
                         .font(.system(size: 12))
                         .foregroundStyle(Color.secondaryText)
                         .padding(.horizontal, 24)
@@ -423,6 +683,9 @@ private struct EntryRow: View {
     let entry: MoodEntry
 
     var body: some View {
+        let tags = extractTags(from: entry.mood)
+        let body = bodyWithoutTags(entry.mood)
+
         HStack(alignment: .top, spacing: 14) {
             VStack(alignment: .leading, spacing: 6) {
                 Text(entry.date, format: .dateTime.hour(.twoDigits(amPM: .omitted)).minute())
@@ -432,11 +695,24 @@ private struct EntryRow: View {
             }
             .frame(width: 44, alignment: .leading)
 
-            Text(entry.mood)
-                .font(.system(size: 13))
-                .foregroundStyle(Color.primaryText)
-                .lineSpacing(3)
-                .fixedSize(horizontal: false, vertical: true)
+            VStack(alignment: .leading, spacing: 6) {
+                if !body.isEmpty {
+                    Text(body)
+                        .font(.system(size: 13))
+                        .foregroundStyle(Color.primaryText)
+                        .lineSpacing(3)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                if !tags.isEmpty {
+                    HStack(spacing: 10) {
+                        ForEach(tags, id: \.self) { tag in
+                            Text("#\(tag)")
+                                .font(.system(size: 11, design: .monospaced))
+                                .foregroundStyle(Color.accentDot)
+                        }
+                    }
+                }
+            }
 
             Spacer()
         }
