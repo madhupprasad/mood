@@ -223,3 +223,4 @@ final class SpeechTranscriber {
         state = .idle
     }
 }
+

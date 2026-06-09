@@ -448,6 +448,7 @@ private struct Composer: View {
     @State private var now: Date = Date()
     @State private var transcriber = SpeechTranscriber()
     @State private var draftBeforeRecording: String = ""
+    @State private var pttHolding: Bool = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -468,6 +469,9 @@ private struct Composer: View {
                     .foregroundStyle(Color.primaryText)
                     .lineLimit(1...5)
                     .onSubmit(onLog)
+                    .onKeyPress(.space, phases: .all) { press in
+                        handlePushToTalk(press)
+                    }
 
                 Button(action: toggleRecording) {
                     Image(systemName: micIcon)
@@ -556,7 +560,7 @@ private struct Composer: View {
         case .recording: "Stop recording"
         case .denied: "Allow microphone access in System Settings"
         case .unavailable: "Speech recognition unavailable"
-        case .idle: "Dictate your entry"
+        case .idle: "Dictate your entry  (or hold ⌥Space)"
         }
     }
 
@@ -567,6 +571,23 @@ private struct Composer: View {
             draftBeforeRecording = draft
             Task { await transcriber.start() }
         }
+    }
+
+    private func handlePushToTalk(_ press: KeyPress) -> KeyPress.Result {
+        if pttHolding {
+            if press.phase == .up {
+                pttHolding = false
+                transcriber.stop()
+            }
+            return .handled
+        }
+        if press.phase == .down && press.modifiers.contains(.option) {
+            pttHolding = true
+            draftBeforeRecording = draft
+            Task { await transcriber.start() }
+            return .handled
+        }
+        return .ignored
     }
 }
 
