@@ -49,14 +49,107 @@ final class MoodStore {
 
 // MARK: - Theme
 
-private extension Color {
-    static let appBackground = Color(red: 0.97, green: 0.96, blue: 0.93)
-    static let sidebarBackground = Color(red: 0.94, green: 0.93, blue: 0.89)
-    static let selectionFill = Color(red: 0.90, green: 0.88, blue: 0.83)
-    static let primaryText = Color(red: 0.18, green: 0.17, blue: 0.16)
-    static let secondaryText = Color(red: 0.55, green: 0.53, blue: 0.49)
-    static let mutedLine = Color(red: 0.87, green: 0.85, blue: 0.81)
-    static let accentDot = Color(red: 0.48, green: 0.66, blue: 0.45)
+struct Theme: Identifiable, Equatable {
+    let id: String
+    let name: String
+    let background: Color
+    let sidebar: Color
+    let selection: Color
+    let primary: Color
+    let secondary: Color
+    let line: Color
+    let accent: Color
+    let logButtonText: Color
+    let isDark: Bool
+}
+
+enum ThemeCatalog {
+    static let cream = Theme(
+        id: "cream",
+        name: "Cream",
+        background: Color(red: 0.97, green: 0.96, blue: 0.93),
+        sidebar: Color(red: 0.94, green: 0.93, blue: 0.89),
+        selection: Color(red: 0.90, green: 0.88, blue: 0.83),
+        primary: Color(red: 0.18, green: 0.17, blue: 0.16),
+        secondary: Color(red: 0.55, green: 0.53, blue: 0.49),
+        line: Color(red: 0.87, green: 0.85, blue: 0.81),
+        accent: Color(red: 0.48, green: 0.66, blue: 0.45),
+        logButtonText: .white,
+        isDark: false
+    )
+
+    static let slate = Theme(
+        id: "slate",
+        name: "Slate",
+        background: Color(red: 0.11, green: 0.12, blue: 0.13),
+        sidebar: Color(red: 0.14, green: 0.15, blue: 0.17),
+        selection: Color(red: 0.20, green: 0.22, blue: 0.25),
+        primary: Color(red: 0.91, green: 0.90, blue: 0.87),
+        secondary: Color(red: 0.55, green: 0.55, blue: 0.53),
+        line: Color(red: 0.19, green: 0.20, blue: 0.22),
+        accent: Color(red: 0.58, green: 0.78, blue: 0.55),
+        logButtonText: Color(red: 0.11, green: 0.12, blue: 0.13),
+        isDark: true
+    )
+
+    static let sky = Theme(
+        id: "sky",
+        name: "Sky",
+        background: Color(red: 0.96, green: 0.97, blue: 0.99),
+        sidebar: Color(red: 0.90, green: 0.93, blue: 0.96),
+        selection: Color(red: 0.82, green: 0.87, blue: 0.93),
+        primary: Color(red: 0.12, green: 0.17, blue: 0.23),
+        secondary: Color(red: 0.42, green: 0.49, blue: 0.57),
+        line: Color(red: 0.80, green: 0.85, blue: 0.90),
+        accent: Color(red: 0.34, green: 0.55, blue: 0.85),
+        logButtonText: .white,
+        isDark: false
+    )
+
+    static let lavender = Theme(
+        id: "lavender",
+        name: "Lavender",
+        background: Color(red: 0.96, green: 0.95, blue: 0.97),
+        sidebar: Color(red: 0.92, green: 0.90, blue: 0.94),
+        selection: Color(red: 0.85, green: 0.82, blue: 0.89),
+        primary: Color(red: 0.20, green: 0.16, blue: 0.26),
+        secondary: Color(red: 0.50, green: 0.45, blue: 0.55),
+        line: Color(red: 0.84, green: 0.81, blue: 0.87),
+        accent: Color(red: 0.59, green: 0.42, blue: 0.78),
+        logButtonText: .white,
+        isDark: false
+    )
+
+    static let solar = Theme(
+        id: "solar",
+        name: "Solar",
+        background: Color(red: 0.98, green: 0.95, blue: 0.91),
+        sidebar: Color(red: 0.95, green: 0.91, blue: 0.83),
+        selection: Color(red: 0.91, green: 0.85, blue: 0.73),
+        primary: Color(red: 0.18, green: 0.14, blue: 0.09),
+        secondary: Color(red: 0.58, green: 0.52, blue: 0.41),
+        line: Color(red: 0.86, green: 0.78, blue: 0.62),
+        accent: Color(red: 0.89, green: 0.52, blue: 0.29),
+        logButtonText: .white,
+        isDark: false
+    )
+
+    static let all: [Theme] = [cream, slate, sky, lavender, solar]
+
+    static func theme(forID id: String) -> Theme {
+        all.first(where: { $0.id == id }) ?? cream
+    }
+}
+
+private struct ThemeKey: EnvironmentKey {
+    static let defaultValue: Theme = ThemeCatalog.cream
+}
+
+extension EnvironmentValues {
+    var theme: Theme {
+        get { self[ThemeKey.self] }
+        set { self[ThemeKey.self] = newValue }
+    }
 }
 
 // MARK: - Sidebar model
@@ -120,37 +213,41 @@ func colorForTag(_ name: String) -> Color {
 
 struct ContentView: View {
     private let store = MoodStore.shared
+    @AppStorage("themeID") private var themeID: String = ThemeCatalog.cream.id
     @State private var filter: SidebarFilter = .section(.allEntries)
     @State private var calendarDate: Date = Date()
     @State private var draft: String = ""
+
+    private var theme: Theme { ThemeCatalog.theme(forID: themeID) }
 
     var body: some View {
         HStack(spacing: 0) {
             Sidebar(
                 filter: $filter,
                 calendarDate: $calendarDate,
-                allTags: allTags,
-                entryCount: store.entries.count
+                themeID: $themeID,
+                allTags: allTags
             )
             .frame(width: 220)
 
             Rectangle()
-                .fill(Color.mutedLine)
+                .fill(theme.line)
                 .frame(width: 1)
 
             VStack(spacing: 0) {
                 Composer(draft: $draft, onLog: log)
-                Rectangle().fill(Color.mutedLine).frame(height: 1)
+                Rectangle().fill(theme.line).frame(height: 1)
                 EntriesList(
                     entries: filteredEntries,
                     filter: filter,
                     calendarDate: calendarDate
                 )
             }
-            .background(Color.appBackground)
+            .background(theme.background)
         }
+        .environment(\.theme, theme)
         .frame(minWidth: 900, minHeight: 600)
-        .preferredColorScheme(.light)
+        .preferredColorScheme(theme.isDark ? .dark : .light)
     }
 
     private var allTags: [String] {
@@ -189,10 +286,11 @@ struct ContentView: View {
 // MARK: - Sidebar
 
 private struct Sidebar: View {
+    @Environment(\.theme) private var theme
     @Binding var filter: SidebarFilter
     @Binding var calendarDate: Date
+    @Binding var themeID: String
     let allTags: [String]
-    let entryCount: Int
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -220,7 +318,7 @@ private struct Sidebar: View {
             if allTags.isEmpty {
                 Text("Type #tags in your entries")
                     .font(.system(size: 11))
-                    .foregroundStyle(Color.secondaryText)
+                    .foregroundStyle(theme.secondary)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 4)
             } else {
@@ -232,12 +330,12 @@ private struct Sidebar: View {
                             Circle().fill(colorForTag(tag)).frame(width: 7, height: 7)
                             Text(tag)
                                 .font(.system(size: 12))
-                                .foregroundStyle(Color.primaryText)
+                                .foregroundStyle(theme.primary)
                             Spacer()
                         }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 5)
-                        .background(filter == .tag(tag) ? Color.selectionFill : Color.clear)
+                        .background(filter == .tag(tag) ? theme.selection : Color.clear)
                     }
                     .buttonStyle(.plain)
                 }
@@ -245,13 +343,14 @@ private struct Sidebar: View {
 
             Spacer()
 
-            UserCard(name: "Alex Chen", subtitle: "\(entryCount) entries")
+            ThemePicker(themeID: $themeID)
         }
-        .background(Color.sidebarBackground)
+        .background(theme.sidebar)
     }
 }
 
 private struct SectionHeader: View {
+    @Environment(\.theme) private var theme
     let title: String
     let trailing: String?
 
@@ -260,12 +359,12 @@ private struct SectionHeader: View {
             Text(title)
                 .font(.system(size: 10, weight: .semibold))
                 .tracking(0.8)
-                .foregroundStyle(Color.secondaryText)
+                .foregroundStyle(theme.secondary)
             Spacer()
             if let trailing {
                 Text(trailing)
                     .font(.system(size: 12))
-                    .foregroundStyle(Color.secondaryText)
+                    .foregroundStyle(theme.secondary)
             }
         }
         .padding(.horizontal, 16)
@@ -275,6 +374,7 @@ private struct SectionHeader: View {
 }
 
 private struct SidebarRow: View {
+    @Environment(\.theme) private var theme
     let title: String
     let icon: String
     let selected: Bool
@@ -285,22 +385,23 @@ private struct SidebarRow: View {
             HStack(spacing: 10) {
                 Image(systemName: icon)
                     .font(.system(size: 10))
-                    .foregroundStyle(Color.primaryText)
+                    .foregroundStyle(theme.primary)
                     .frame(width: 12)
                 Text(title)
                     .font(.system(size: 12))
-                    .foregroundStyle(Color.primaryText)
+                    .foregroundStyle(theme.primary)
                 Spacer()
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 6)
-            .background(selected ? Color.selectionFill : Color.clear)
+            .background(selected ? theme.selection : Color.clear)
         }
         .buttonStyle(.plain)
     }
 }
 
 private struct MiniCalendar: View {
+    @Environment(\.theme) private var theme
     @Binding var selected: Date
     @State private var month: Date = Date()
 
@@ -311,7 +412,7 @@ private struct MiniCalendar: View {
             HStack(spacing: 6) {
                 Text(month, format: .dateTime.month(.wide).year())
                     .font(.system(size: 11, weight: .semibold))
-                    .foregroundStyle(Color.primaryText)
+                    .foregroundStyle(theme.primary)
                 Spacer()
                 navButton(systemImage: "chevron.left") { shiftMonth(-1) }
                 navButton(systemImage: "chevron.right") { shiftMonth(1) }
@@ -321,7 +422,7 @@ private struct MiniCalendar: View {
                 ForEach(weekdaySymbols, id: \.self) { symbol in
                     Text(symbol)
                         .font(.system(size: 9, weight: .medium, design: .monospaced))
-                        .foregroundStyle(Color.secondaryText)
+                        .foregroundStyle(theme.secondary)
                         .frame(maxWidth: .infinity)
                 }
             }
@@ -343,7 +444,7 @@ private struct MiniCalendar: View {
         Button(action: action) {
             Image(systemName: systemImage)
                 .font(.system(size: 9, weight: .medium))
-                .foregroundStyle(Color.secondaryText)
+                .foregroundStyle(theme.secondary)
                 .frame(width: 16, height: 16)
         }
         .buttonStyle(.plain)
@@ -358,7 +459,7 @@ private struct MiniCalendar: View {
     }
 
     private var leadingBlanks: Int {
-        let weekday = calendar.component(.weekday, from: monthStart) // 1 = Sun
+        let weekday = calendar.component(.weekday, from: monthStart)
         return weekday - calendar.firstWeekday
     }
 
@@ -386,14 +487,14 @@ private struct MiniCalendar: View {
             } label: {
                 Text("\(calendar.component(.day, from: date))")
                     .font(.system(size: 11, design: .monospaced))
-                    .foregroundStyle(isSelected ? .white : Color.primaryText)
+                    .foregroundStyle(isSelected ? theme.logButtonText : theme.primary)
                     .frame(maxWidth: .infinity, minHeight: 20)
                     .background(
                         Group {
                             if isSelected {
-                                RoundedRectangle(cornerRadius: 4).fill(Color.primaryText)
+                                RoundedRectangle(cornerRadius: 4).fill(theme.primary)
                             } else if isToday {
-                                RoundedRectangle(cornerRadius: 4).stroke(Color.primaryText.opacity(0.35), lineWidth: 1)
+                                RoundedRectangle(cornerRadius: 4).stroke(theme.primary.opacity(0.35), lineWidth: 1)
                             }
                         }
                     )
@@ -407,33 +508,58 @@ private struct MiniCalendar: View {
     }
 }
 
-private struct UserCard: View {
-    let name: String
-    let subtitle: String
+// MARK: - Theme picker
+
+private struct ThemePicker: View {
+    @Environment(\.theme) private var theme
+    @Binding var themeID: String
 
     var body: some View {
-        HStack(spacing: 10) {
-            Circle()
-                .fill(Color(red: 0.93, green: 0.55, blue: 0.32))
-                .frame(width: 28, height: 28)
-                .overlay(
-                    Text(String(name.prefix(1)))
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundStyle(.white)
-                )
-            VStack(alignment: .leading, spacing: 1) {
-                Text(name)
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundStyle(Color.primaryText)
-                Text(subtitle)
+        VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                Text("THEME")
+                    .font(.system(size: 10, weight: .semibold))
+                    .tracking(0.8)
+                    .foregroundStyle(theme.secondary)
+                Spacer()
+                Text(theme.name)
                     .font(.system(size: 10))
-                    .foregroundStyle(Color.secondaryText)
+                    .foregroundStyle(theme.secondary)
             }
-            Spacer()
+            HStack(spacing: 10) {
+                ForEach(ThemeCatalog.all) { candidate in
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.18)) {
+                            themeID = candidate.id
+                        }
+                    } label: {
+                        ZStack {
+                            Circle()
+                                .stroke(theme.primary, lineWidth: 1.5)
+                                .padding(-3)
+                                .opacity(themeID == candidate.id ? 1 : 0)
+
+                            Circle()
+                                .fill(candidate.background)
+                                .overlay(
+                                    Circle()
+                                        .trim(from: 0.5, to: 1.0)
+                                        .fill(candidate.accent)
+                                        .rotationEffect(.degrees(-90))
+                                )
+                                .overlay(Circle().stroke(candidate.primary.opacity(0.3), lineWidth: 0.8))
+                                .frame(width: 22, height: 22)
+                        }
+                    }
+                    .buttonStyle(.plain)
+                    .help(candidate.name)
+                }
+                Spacer()
+            }
         }
         .padding(16)
         .overlay(
-            Rectangle().fill(Color.mutedLine).frame(height: 1),
+            Rectangle().fill(theme.line).frame(height: 1),
             alignment: .top
         )
     }
@@ -442,6 +568,7 @@ private struct UserCard: View {
 // MARK: - Composer
 
 private struct Composer: View {
+    @Environment(\.theme) private var theme
     @Binding var draft: String
     let onLog: () -> Void
 
@@ -456,17 +583,17 @@ private struct Composer: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(now, format: .dateTime.hour(.twoDigits(amPM: .omitted)).minute().second())
                         .font(.system(size: 11, design: .monospaced))
-                        .foregroundStyle(Color.secondaryText)
+                        .foregroundStyle(theme.secondary)
                     Text(now, format: .dateTime.month(.abbreviated).day())
                         .font(.system(size: 11, design: .monospaced))
-                        .foregroundStyle(Color.secondaryText)
+                        .foregroundStyle(theme.secondary)
                 }
                 .frame(width: 60, alignment: .leading)
 
                 TextField("What's on your mind right now…", text: $draft, axis: .vertical)
                     .textFieldStyle(.plain)
                     .font(.system(size: 14))
-                    .foregroundStyle(Color.primaryText)
+                    .foregroundStyle(theme.primary)
                     .lineLimit(1...5)
                     .onSubmit(onLog)
                     .onKeyPress(.space, phases: .all) { press in
@@ -490,18 +617,18 @@ private struct Composer: View {
                 Text("MOOD")
                     .font(.system(size: 10, weight: .semibold))
                     .tracking(0.8)
-                    .foregroundStyle(Color.secondaryText)
+                    .foregroundStyle(theme.secondary)
                 HStack(spacing: 14) {
-                    Circle().fill(Color.primaryText).frame(width: 7, height: 7)
-                    Rectangle().fill(Color.primaryText).frame(width: 7, height: 7)
-                    Triangle().fill(Color.primaryText).frame(width: 8, height: 7)
-                    Triangle().fill(Color.primaryText).frame(width: 8, height: 7).rotationEffect(.degrees(180))
-                    Circle().stroke(Color.primaryText, lineWidth: 1).frame(width: 7, height: 7)
+                    Circle().fill(theme.primary).frame(width: 7, height: 7)
+                    Rectangle().fill(theme.primary).frame(width: 7, height: 7)
+                    Triangle().fill(theme.primary).frame(width: 8, height: 7)
+                    Triangle().fill(theme.primary).frame(width: 8, height: 7).rotationEffect(.degrees(180))
+                    Circle().stroke(theme.primary, lineWidth: 1).frame(width: 7, height: 7)
                 }
                 Spacer()
                 Text(statusText)
                     .font(.system(size: 10))
-                    .foregroundStyle(Color.secondaryText)
+                    .foregroundStyle(theme.secondary)
                 Button(action: onLog) {
                     HStack(spacing: 4) {
                         Image(systemName: "arrow.up").font(.system(size: 10, weight: .medium))
@@ -509,8 +636,8 @@ private struct Composer: View {
                     }
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
-                    .background(Color.primaryText)
-                    .foregroundStyle(.white)
+                    .background(theme.primary)
+                    .foregroundStyle(theme.logButtonText)
                     .cornerRadius(6)
                 }
                 .buttonStyle(.plain)
@@ -550,8 +677,8 @@ private struct Composer: View {
     private var micColor: Color {
         switch transcriber.state {
         case .recording: .red
-        case .denied, .unavailable: Color.secondaryText.opacity(0.5)
-        case .idle: Color.secondaryText
+        case .denied, .unavailable: theme.secondary.opacity(0.5)
+        case .idle: theme.secondary
         }
     }
 
@@ -605,6 +732,7 @@ private struct Triangle: Shape {
 // MARK: - Entries list
 
 private struct EntriesList: View {
+    @Environment(\.theme) private var theme
     let entries: [MoodEntry]
     let filter: SidebarFilter
     let calendarDate: Date
@@ -658,24 +786,24 @@ private struct EntriesList: View {
                     Text(headerTitle)
                         .font(.system(size: 10, weight: .semibold))
                         .tracking(0.8)
-                        .foregroundStyle(Color.secondaryText)
-                    Text("·").foregroundStyle(Color.secondaryText)
+                        .foregroundStyle(theme.secondary)
+                    Text("·").foregroundStyle(theme.secondary)
                     Text("\(entries.count) \(entries.count == 1 ? "entry" : "entries")")
                         .font(.system(size: 10))
-                        .foregroundStyle(Color.secondaryText)
+                        .foregroundStyle(theme.secondary)
                     Spacer()
                 }
                 .padding(.horizontal, 24)
                 .padding(.vertical, 14)
                 .overlay(
-                    Rectangle().fill(Color.mutedLine).frame(height: 1),
+                    Rectangle().fill(theme.line).frame(height: 1),
                     alignment: .bottom
                 )
 
                 if entries.isEmpty {
                     Text(emptyMessage)
                         .font(.system(size: 12))
-                        .foregroundStyle(Color.secondaryText)
+                        .foregroundStyle(theme.secondary)
                         .padding(.horizontal, 24)
                         .padding(.vertical, 40)
                 }
@@ -684,7 +812,7 @@ private struct EntriesList: View {
                     Text(group.label)
                         .font(.system(size: 10, weight: .semibold))
                         .tracking(0.8)
-                        .foregroundStyle(Color.secondaryText)
+                        .foregroundStyle(theme.secondary)
                         .padding(.horizontal, 24)
                         .padding(.top, 18)
                         .padding(.bottom, 6)
@@ -701,6 +829,7 @@ private struct EntriesList: View {
 }
 
 private struct EntryRow: View {
+    @Environment(\.theme) private var theme
     let entry: MoodEntry
 
     var body: some View {
@@ -711,8 +840,8 @@ private struct EntryRow: View {
             VStack(alignment: .leading, spacing: 6) {
                 Text(entry.date, format: .dateTime.hour(.twoDigits(amPM: .omitted)).minute())
                     .font(.system(size: 11, design: .monospaced))
-                    .foregroundStyle(Color.secondaryText)
-                Circle().fill(Color.accentDot).frame(width: 6, height: 6)
+                    .foregroundStyle(theme.secondary)
+                Circle().fill(theme.accent).frame(width: 6, height: 6)
             }
             .frame(width: 44, alignment: .leading)
 
@@ -720,7 +849,7 @@ private struct EntryRow: View {
                 if !body.isEmpty {
                     Text(body)
                         .font(.system(size: 13))
-                        .foregroundStyle(Color.primaryText)
+                        .foregroundStyle(theme.primary)
                         .lineSpacing(3)
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -729,7 +858,7 @@ private struct EntryRow: View {
                         ForEach(tags, id: \.self) { tag in
                             Text("#\(tag)")
                                 .font(.system(size: 11, design: .monospaced))
-                                .foregroundStyle(Color.accentDot)
+                                .foregroundStyle(theme.accent)
                         }
                     }
                 }
@@ -740,7 +869,7 @@ private struct EntryRow: View {
         .padding(.horizontal, 24)
         .padding(.vertical, 12)
         .overlay(
-            Rectangle().fill(Color.mutedLine.opacity(0.6)).frame(height: 1),
+            Rectangle().fill(theme.line.opacity(0.6)).frame(height: 1),
             alignment: .bottom
         )
     }
