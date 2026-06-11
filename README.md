@@ -88,11 +88,36 @@ The app uses [Sparkle](https://sparkle-project.org) so users get update prompts 
 
 ### Cutting a release
 
+**Preferred — GitHub Actions** (builds from the literal commit, signs in CI, never touches your laptop):
+
 ```bash
-./scripts/release.sh 0.2 "Adds Chat tab; misc fixes."
+git tag v1.3
+git push --tags
 ```
 
-That script archives + exports the `.app`, zips it, signs the zip with your Sparkle key, creates a GitHub release with the zip attached, and prints a ready-to-paste `<item>` block. Copy it into `appcast.xml` (newest at top), commit + push. Friends get the prompt within 24h of next launch, or instantly if they hit "Check for Updates…".
+That triggers `.github/workflows/release.yml`, which archives + exports + zips the `.app`, signs with `SPARKLE_PRIVATE_KEY` from repo secrets, creates the GitHub release, updates `appcast.xml`, and pushes. Friends with a previous version get an in-app update prompt automatically.
+
+You can also trigger it manually from **GitHub → Actions → Release → Run workflow** and fill in version + notes.
+
+**One-time setup for the Action:**
+
+1. Export your Sparkle private key:
+   ```bash
+   ~/Library/Developer/Xcode/DerivedData/mood-*/SourcePackages/artifacts/sparkle/Sparkle/bin/generate_keys -x /tmp/sparkle.key
+   ```
+2. Copy the contents of `/tmp/sparkle.key`.
+3. Repo → **Settings → Secrets and variables → Actions → New repository secret**:
+   - Name: `SPARKLE_PRIVATE_KEY`
+   - Value: paste the key
+4. Securely delete the local copy: `rm -P /tmp/sparkle.key`
+
+**Local fallback** (your laptop, useful if Actions is down):
+
+```bash
+./scripts/release.sh 1.3 "Notes here"
+```
+
+Refuses to run unless `main` is clean and synced with `origin/main`, so the released binary is provably from the same commit on GitHub.
 
 ## Project structure
 

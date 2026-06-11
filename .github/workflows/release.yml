@@ -1,0 +1,194 @@
+name: Release
+
+# Trigger by either:
+#   • pushing a git tag matching v* (e.g. v1.3) → builds that exact commit
+#   • manual run from the Actions tab with a version + notes
+#
+# What it does:
+#   1. checks out the commit being released
+#   2. archives + exports + zips the .app
+#   3. signs the zip with the Sparkle EdDSA key (stored as a repo secret)
+#   4. creates a GitHub release with the zip attached
+#   5. updates appcast.xml on main and pushes
+#
+# One-time setup (see README → "Auto-updates (Sparkle)"):
+#   • Export your Sparkle private key:  ./Sparkle/bin/generate_keys -x /tmp/sparkle.key
+#   • Repo → Settings → Secrets and variables → Actions → New repository secret
+#       Name:  SPARKLE_PRIVATE_KEY
+#       Value: paste the contents of /tmp/sparkle.key
+#   • Securely delete /tmp/sparkle.key:  rm -P /tmp/sparkle.key
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version (e.g. 1.3 — without the leading "v")'
+        required: true
+      notes:
+        description: 'Release notes'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: macos-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine version + notes
+        id: meta
+        env:
+          GITHUB_REF: ${{ github.ref }}
+          INPUT_VERSION: ${{ github.event.inputs.version }}
+          INPUT_NOTES:   ${{ github.event.inputs.notes }}
+        run: |
+          if [ -n "$INPUT_VERSION" ]; then
+            VERSION="$INPUT_VERSION"
+            NOTES="$INPUT_NOTES"
+          else
+            VERSION="${GITHUB_REF#refs/tags/v}"
+            NOTES=""
+          fi
+          [ -z "$NOTES" ] && NOTES="Release v$VERSION"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          {
+            echo 'notes<<NOTES_EOF'
+            printf '%s\n' "$NOTES"
+            echo 'NOTES_EOF'
+          } >> "$GITHUB_OUTPUT"
+          echo "Releasing v$VERSION"
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode.app
+
+      - name: Resolve Swift packages
+        run: xcodebuild -resolvePackageDependencies -project mood.xcodeproj
+
+      - name: Archive
+        env:
+          VERSION: ${{ steps.meta.outputs.version }}
+        run: |
+          xcodebuild archive \
+            -project mood.xcodeproj \
+            -scheme mood \
+            -configuration Release \
+            -destination 'generic/platform=macOS' \
+            -archivePath build/mood.xcarchive \
+            MARKETING_VERSION="$VERSION" \
+            CODE_SIGN_IDENTITY="-" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Export
+        run: |
+          xcodebuild -exportArchive \
+            -archivePath build/mood.xcarchive \
+            -exportPath build/export \
+            -exportOptionsPlist scripts/ExportOptions.plist
+
+      - name: Zip
+        env:
+          VERSION: ${{ steps.meta.outputs.version }}
+        run: |
+          mkdir -p build
+          ditto -c -k --sequesterRsrc --keepParent \
+            build/export/mood.app \
+            "build/mood-${VERSION}.zip"
+          ls -lh "build/mood-${VERSION}.zip"
+
+      - name: Sign update
+        env:
+          VERSION: ${{ steps.meta.outputs.version }}
+          SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
+        run: |
+          if [ -z "$SPARKLE_PRIVATE_KEY" ]; then
+            echo "::error::SPARKLE_PRIVATE_KEY secret is not set. See README."
+            exit 1
+          fi
+          SIGN=$(find ~/Library/Developer/Xcode/DerivedData -name sign_update -type f 2>/dev/null | head -1)
+          if [ -z "$SIGN" ]; then
+            echo "::error::Could not locate sign_update binary in DerivedData."
+            exit 1
+          fi
+          SIG_LINE=$("$SIGN" -s "$SPARKLE_PRIVATE_KEY" "build/mood-${VERSION}.zip")
+          echo "SIG_LINE=$SIG_LINE" >> "$GITHUB_ENV"
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION:  ${{ steps.meta.outputs.version }}
+          NOTES:    ${{ steps.meta.outputs.notes }}
+        run: |
+          gh release create "v${VERSION}" "build/mood-${VERSION}.zip" \
+            --title "v${VERSION}" \
+            --notes "$NOTES"
+
+      - name: Update appcast.xml on main
+        env:
+          VERSION: ${{ steps.meta.outputs.version }}
+          NOTES:   ${{ steps.meta.outputs.notes }}
+          REPO:    ${{ github.repository }}
+        run: |
+          # Switch to main so the appcast update lands on the branch
+          git fetch origin main
+          git checkout -B main origin/main
+
+          PUBDATE=$(date -u "+%a, %d %b %Y %H:%M:%S +0000")
+          DOWNLOAD_URL="https://github.com/${REPO}/releases/download/v${VERSION}/mood-${VERSION}.zip"
+
+          NEW_ITEM_FILE=$(mktemp)
+          cat > "$NEW_ITEM_FILE" <<EOF
+              <item>
+                <title>Version ${VERSION}</title>
+                <pubDate>${PUBDATE}</pubDate>
+                <sparkle:version>${VERSION}</sparkle:version>
+                <sparkle:shortVersionString>${VERSION}</sparkle:shortVersionString>
+                <sparkle:minimumSystemVersion>26.5</sparkle:minimumSystemVersion>
+                <description><![CDATA[${NOTES}]]></description>
+                <enclosure url="${DOWNLOAD_URL}" type="application/octet-stream" ${SIG_LINE}/>
+              </item>
+          EOF
+
+          python3 - appcast.xml "$NEW_ITEM_FILE" <<'PYEOF'
+          import sys
+
+          appcast_path, new_item_path = sys.argv[1], sys.argv[2]
+          with open(appcast_path) as f:
+              content = f.read()
+          with open(new_item_path) as f:
+              new_item = f.read().rstrip()
+
+          anchor = content.find("<item>")
+          if anchor == -1:
+              anchor = content.find("</channel>")
+              if anchor == -1:
+                  raise SystemExit("appcast.xml has no <item> or </channel> anchor")
+
+          line_start = content.rfind("\n", 0, anchor) + 1
+          indent = content[line_start:anchor]
+          indented_new = "\n".join(
+              indent + line.lstrip() if line.strip() else ""
+              for line in new_item.splitlines()
+          )
+
+          content = content[:line_start] + indented_new + "\n" + content[line_start:]
+          with open(appcast_path, "w") as f:
+              f.write(content)
+          PYEOF
+
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add appcast.xml
+          git commit -m "appcast: v${VERSION}"
+          git push origin main
