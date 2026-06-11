@@ -11,6 +11,15 @@
     <description>Updates for mood</description>
     <language>en</language>
     <item>
+    <title>Version 1.3</title>
+    <pubDate>Thu, 11 Jun 2026 14:38:40 +0000</pubDate>
+    <sparkle:version>1.3</sparkle:version>
+    <sparkle:shortVersionString>1.3</sparkle:shortVersionString>
+    <sparkle:minimumSystemVersion>26.5</sparkle:minimumSystemVersion>
+    <description><![CDATA[Test]]></description>
+    <enclosure url="https://github.com/madhupprasad/mood/releases/download/v1.3/mood-1.3.zip" type="application/octet-stream" sparkle:edSignature="L6bcU+3Dy0bT9RdsQ4nPCO4FZVPYKnaTqScsK3btNxDkDRREzPpdKuQP174K1+LOtMbosdh3hmvrtb1GMEALDg==" length="1694862"/>
+    </item>
+    <item>
         <title>Version 1.2</title>
         <pubDate>Thu, 11 Jun 2026 13:51:20 +0000</pubDate>
         <sparkle:version>1.2</sparkle:version>
