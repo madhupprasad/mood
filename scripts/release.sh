@@ -105,7 +105,6 @@ then commit + push:
     <description><![CDATA[$NOTES]]></description>
     <enclosure
         url="$DOWNLOAD_URL"
-        length="$ZIP_SIZE"
         type="application/octet-stream"
         $SIG_LINE/>
 </item>

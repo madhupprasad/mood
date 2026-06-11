@@ -42,7 +42,6 @@
             <description><![CDATA[Initial Sparkle-enabled release.]]></description>
             <enclosure
                 url="https://github.com/madhupprasad/mood/releases/download/v0.1/mood-0.1.zip"
-                length="1695043"
                 type="application/octet-stream"
                 sparkle:edSignature="YsdKENXjEOJxrfE6AgXpjYhG9pycehvpocBTXSASssoFX5PjTUWFqwyqYZcDeJ1iIXaWu2FZ7NyIJaOy20zZBA==" length="1695043"/>
         </item>
