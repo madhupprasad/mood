@@ -147,7 +147,7 @@ private struct EntryRow: View {
                 Text(entry.date, format: .dateTime.hour(.twoDigits(amPM: .omitted)).minute())
                     .font(.system(size: 11, design: .monospaced))
                     .foregroundStyle(theme.secondary)
-                Circle().fill(theme.accent).frame(width: 6, height: 6)
+                moodIndicator
             }
             .frame(width: 44, alignment: .leading)
 
@@ -178,5 +178,18 @@ private struct EntryRow: View {
             Rectangle().fill(theme.line.opacity(0.6)).frame(height: 1),
             alignment: .bottom
         )
+    }
+
+    @ViewBuilder
+    private var moodIndicator: some View {
+        if let v = entry.moodValue, let level = MoodLevel.all.first(where: { $0.value == v }) {
+            Text(level.shape)
+                .font(.system(size: 11))
+                .foregroundStyle(level.color)
+                .opacity(entry.moodInferred ? 0.6 : 1.0)
+                .help(entry.moodInferred ? "\(level.name) (inferred)" : level.name)
+        } else {
+            Circle().fill(theme.accent).frame(width: 6, height: 6)
+        }
     }
 }

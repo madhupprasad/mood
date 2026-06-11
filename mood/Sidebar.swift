@@ -159,6 +159,8 @@ private struct ThemePicker: View {
     @Environment(\.theme) private var theme
     @Binding var themeID: String
 
+    @State private var showSettings: Bool = false
+
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
@@ -170,6 +172,18 @@ private struct ThemePicker: View {
                 Text(theme.name)
                     .font(.system(size: 10))
                     .foregroundStyle(theme.secondary)
+                Button {
+                    showSettings = true
+                } label: {
+                    Image(systemName: "gearshape")
+                        .font(.system(size: 11))
+                        .foregroundStyle(theme.secondary)
+                }
+                .buttonStyle(.plain)
+                .help("Settings")
+                .popover(isPresented: $showSettings, arrowEdge: .leading) {
+                    SettingsPopover()
+                }
             }
             HStack(spacing: 10) {
                 ForEach(ThemeCatalog.all) { candidate in
@@ -207,5 +221,68 @@ private struct ThemePicker: View {
             Rectangle().fill(theme.line).frame(height: 1),
             alignment: .top
         )
+    }
+}
+
+// MARK: - Settings popover
+
+private struct SettingsPopover: View {
+    @Environment(\.theme) private var theme
+    private let store = MoodStore.shared
+    @State private var confirmingClear: Bool = false
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("Settings")
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundStyle(theme.primary)
+
+            Divider().overlay(theme.line)
+
+            VStack(alignment: .leading, spacing: 10) {
+                Text("DATA")
+                    .font(.system(size: 10, weight: .semibold))
+                    .tracking(0.8)
+                    .foregroundStyle(theme.secondary)
+
+                Text("\(store.entries.count) \(store.entries.count == 1 ? "entry" : "entries") stored locally.")
+                    .font(.system(size: 12))
+                    .foregroundStyle(theme.secondary)
+
+                Button {
+                    confirmingClear = true
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "trash")
+                        Text("Clear all entries")
+                    }
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(
+                        RoundedRectangle(cornerRadius: 6).fill(Color.red.opacity(0.85))
+                    )
+                }
+                .buttonStyle(.plain)
+                .disabled(store.entries.isEmpty)
+                .opacity(store.entries.isEmpty ? 0.5 : 1)
+            }
+        }
+        .padding(20)
+        .frame(width: 260, alignment: .leading)
+        .background(theme.card)
+        .confirmationDialog(
+            "Delete all entries?",
+            isPresented: $confirmingClear,
+            titleVisibility: .visible
+        ) {
+            Button("Delete \(store.entries.count) \(store.entries.count == 1 ? "entry" : "entries")", role: .destructive) {
+                store.clearAll()
+            }
+            Button("Cancel", role: .cancel) { }
+        } message: {
+            Text("This permanently removes every entry. The action cannot be undone — but a one-deep backup is kept at mood-entries.backup.json.")
+        }
     }
 }

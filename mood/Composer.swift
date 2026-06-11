@@ -8,6 +8,7 @@ import SwiftUI
 struct Composer: View {
     @Environment(\.theme) private var theme
     @Binding var draft: String
+    @Binding var selectedMood: Int?
     let onLog: () -> Void
 
     @State private var now: Date = Date()
@@ -56,12 +57,20 @@ struct Composer: View {
                     .font(.system(size: 10, weight: .semibold))
                     .tracking(0.8)
                     .foregroundStyle(theme.secondary)
-                HStack(spacing: 14) {
-                    Circle().fill(theme.primary).frame(width: 7, height: 7)
-                    Rectangle().fill(theme.primary).frame(width: 7, height: 7)
-                    Triangle().fill(theme.primary).frame(width: 8, height: 7)
-                    Triangle().fill(theme.primary).frame(width: 8, height: 7).rotationEffect(.degrees(180))
-                    Circle().stroke(theme.primary, lineWidth: 1).frame(width: 7, height: 7)
+                HStack(spacing: 6) {
+                    ForEach(MoodLevel.all, id: \.value) { level in
+                        Button {
+                            selectedMood = (selectedMood == level.value) ? nil : level.value
+                        } label: {
+                            moodShape(for: level)
+                                .frame(width: 20, height: 20)
+                                .background(
+                                    Circle().fill(selectedMood == level.value ? level.color.opacity(0.18) : Color.clear)
+                                )
+                        }
+                        .buttonStyle(.plain)
+                        .help(level.name)
+                    }
                 }
                 Spacer()
                 Text(statusText)
@@ -153,6 +162,23 @@ struct Composer: View {
             return .handled
         }
         return .ignored
+    }
+
+    @ViewBuilder
+    private func moodShape(for level: MoodLevel) -> some View {
+        let active = selectedMood == level.value
+        let color: Color = active ? level.color : theme.primary
+        let size: CGFloat = 8
+        Group {
+            switch level.value {
+            case 5: Triangle().fill(color).frame(width: size + 1, height: size)
+            case 4: Circle().fill(color).frame(width: size, height: size)
+            case 3: Rectangle().fill(color).frame(width: size, height: size)
+            case 2: Triangle().fill(color).frame(width: size + 1, height: size).rotationEffect(.degrees(180))
+            case 1: Circle().stroke(color, lineWidth: 1.2).frame(width: size, height: size)
+            default: EmptyView()
+            }
+        }
     }
 }
 

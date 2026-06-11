@@ -13,7 +13,7 @@ struct ContentView: View {
     @State private var filter: SidebarFilter = .section(.allEntries)
     @State private var calendarDate: Date = Date()
     @State private var draft: String = ""
-    @State private var summarizer = WeeklySummarizer()
+    @State private var selectedMood: Int? = nil
 
     private var theme: Theme { ThemeCatalog.theme(forID: themeID) }
 
@@ -32,10 +32,10 @@ struct ContentView: View {
                 .frame(width: 1)
 
             VStack(spacing: 0) {
-                Composer(draft: $draft, onLog: log)
+                Composer(draft: $draft, selectedMood: $selectedMood, onLog: log)
                 Rectangle().fill(theme.line).frame(height: 1)
                 if case .section(.trends) = filter {
-                    TrendsView(entries: store.entries, summarizer: summarizer)
+                    TrendsView(entries: store.entries)
                 } else {
                     EntriesList(
                         entries: filteredEntries,
@@ -79,8 +79,9 @@ struct ContentView: View {
     private func log() {
         let trimmed = draft.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return }
-        store.add(trimmed)
+        store.add(trimmed, moodValue: selectedMood)
         draft = ""
+        selectedMood = nil
     }
 }
 
