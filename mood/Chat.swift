@@ -395,7 +395,6 @@ private struct MessageBubble: View {
 private struct ThinkingIndicator: View {
     @Environment(\.theme) private var theme
     @State private var phase: Int = 0
-    private let timer = Timer.publish(every: 0.45, on: .main, in: .common).autoconnect()
 
     var body: some View {
         HStack(spacing: 6) {
@@ -416,8 +415,11 @@ private struct ThinkingIndicator: View {
             RoundedRectangle(cornerRadius: 14, style: .continuous)
                 .stroke(theme.line, lineWidth: 1)
         )
-        .onReceive(timer) { _ in
-            phase = (phase + 1) % 3
+        .task {
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .milliseconds(450))
+                phase = (phase + 1) % 3
+            }
         }
     }
 }

@@ -53,11 +53,12 @@ EXPORT_PATH="$WORK/export"
 ZIP_NAME="mood-${VERSION}.zip"
 ZIP_PATH="$WORK/$ZIP_NAME"
 
-echo "▸ Archiving v$VERSION…"
+echo "▸ Archiving v${VERSION}…"
 xcodebuild archive \
     -project mood.xcodeproj \
     -scheme mood \
     -configuration Release \
+    -destination 'generic/platform=macOS' \
     -archivePath "$ARCHIVE_PATH" \
     MARKETING_VERSION="$VERSION" \
     | tail -5
@@ -81,7 +82,7 @@ ditto -c -k --sequesterRsrc --keepParent "$APP_PATH" "$ZIP_PATH"
 echo "▸ Signing update…"
 SIG_LINE=$("$SIGN_UPDATE_TOOL" "$ZIP_PATH")
 
-echo "▸ Creating GitHub release v$VERSION…"
+echo "▸ Creating GitHub release v${VERSION}…"
 gh release create "v$VERSION" "$ZIP_PATH" --title "v$VERSION" --notes "$NOTES"
 
 PUBDATE=$(date -u "+%a, %d %b %Y %H:%M:%S +0000")

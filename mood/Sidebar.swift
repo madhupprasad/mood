@@ -8,7 +8,7 @@ import SwiftUI
 // MARK: - Sidebar model
 
 enum SidebarSection: Hashable, CaseIterable {
-    case allEntries, today, calendar, trends
+    case allEntries, today, calendar, trends, chat
 
     var title: String {
         switch self {
@@ -16,6 +16,7 @@ enum SidebarSection: Hashable, CaseIterable {
         case .today: "Today"
         case .calendar: "Calendar"
         case .trends: "Trends"
+        case .chat: "Chat with your past"
         }
     }
 
@@ -25,6 +26,7 @@ enum SidebarSection: Hashable, CaseIterable {
         case .today: "sun.max"
         case .calendar: "calendar"
         case .trends: "chart.line.uptrend.xyaxis"
+        case .chat: "bubble.left.and.text.bubble.right"
         }
     }
 }

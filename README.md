@@ -56,6 +56,44 @@ Entries are stored at:
 
 It's plain JSON — easy to back up, easy to migrate.
 
+## Auto-updates (Sparkle)
+
+The app uses [Sparkle](https://sparkle-project.org) so users get update prompts inside the app — no more manual re-downloads. There's a "Check for Updates…" item in the **Mood** menu and the menu bar dropdown; Sparkle also checks silently once a day.
+
+### One-time setup
+
+1. **Add the Sparkle Swift Package**
+   In Xcode → **File → Add Package Dependencies…** → paste `https://github.com/sparkle-project/Sparkle` → choose the latest 2.x release → add to the `mood` target.
+
+2. **Generate update-signing keys** (one time, per developer)
+   From the cloned Sparkle repo or your local DerivedData, run:
+   ```bash
+   ./Sparkle/bin/generate_keys
+   ```
+   - Save the **private key** somewhere safe — it lives in your Keychain by default and is never committed to the repo.
+   - Copy the printed **public key** (`SUPublicEDKey`) for the next step.
+
+3. **Add Info.plist entries**
+   In Xcode → select the project → **mood** target → **Info** tab → "Custom macOS Application Target Properties" → click `+` and add:
+   - `SUFeedURL` (String) → `https://raw.githubusercontent.com/madhupprasad/mood/main/appcast.xml`
+   - `SUPublicEDKey` (String) → the public key from step 2.
+
+4. **Set the `SIGN_UPDATE` env var** so the release script can find Sparkle's signing tool:
+   ```bash
+   export SIGN_UPDATE="$HOME/Library/Developer/Xcode/DerivedData/mood-*/SourcePackages/artifacts/sparkle/Sparkle/bin/sign_update"
+   ```
+   (Or grab it from the Sparkle release archive and put it on `$PATH`.)
+
+5. **Push the initial `appcast.xml`** (it's already in the repo) so users' apps can fetch it.
+
+### Cutting a release
+
+```bash
+./scripts/release.sh 0.2 "Adds Chat tab; misc fixes."
+```
+
+That script archives + exports the `.app`, zips it, signs the zip with your Sparkle key, creates a GitHub release with the zip attached, and prints a ready-to-paste `<item>` block. Copy it into `appcast.xml` (newest at top), commit + push. Friends get the prompt within 24h of next launch, or instantly if they hit "Check for Updates…".
+
 ## Project structure
 
 ```

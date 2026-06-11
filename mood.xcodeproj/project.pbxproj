@@ -6,13 +6,30 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		C2D7C8362FDAD633004B7DAB /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = C2D7C8352FDAD633004B7DAB /* Sparkle */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		C2FF82F92FD687CD005FB418 /* mood.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = mood.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		C2D7C8382FDAD7DE004B7DAB /* Exceptions for "mood" folder in "mood" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = C2FF82F82FD687CD005FB418 /* mood */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		C2FF82FB2FD687CD005FB418 /* mood */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				C2D7C8382FDAD7DE004B7DAB /* Exceptions for "mood" folder in "mood" target */,
+			);
 			path = mood;
 			sourceTree = "<group>";
 		};
@@ -23,6 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C2D7C8362FDAD633004B7DAB /* Sparkle in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +83,7 @@
 			);
 			name = mood;
 			packageProductDependencies = (
+				C2D7C8352FDAD633004B7DAB /* Sparkle */,
 			);
 			productName = mood;
 			productReference = C2FF82F92FD687CD005FB418 /* mood.app */;
@@ -94,6 +113,9 @@
 			);
 			mainGroup = C2FF82F02FD687CD005FB418;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				C2D7C8342FDAD633004B7DAB /* XCRemoteSwiftPackageReference "Sparkle" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = C2FF82FA2FD687CD005FB418 /* Products */;
 			projectDirPath = "";
@@ -265,6 +287,8 @@
 				ENABLE_RESOURCE_ACCESS_USB = NO;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = mood/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Used to record voice notes for transcription";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Used to transcribe your voice notes into text";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
@@ -322,6 +346,8 @@
 				ENABLE_RESOURCE_ACCESS_USB = NO;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = mood/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Used to record voice notes for transcription";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Used to transcribe your voice notes into text";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
@@ -377,6 +403,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		C2D7C8342FDAD633004B7DAB /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparkle-project/Sparkle";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.9.3;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		C2D7C8352FDAD633004B7DAB /* Sparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C2D7C8342FDAD633004B7DAB /* XCRemoteSwiftPackageReference "Sparkle" */;
+			productName = Sparkle;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = C2FF82F12FD687CD005FB418 /* Project object */;
 }

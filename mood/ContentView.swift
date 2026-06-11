@@ -14,6 +14,7 @@ struct ContentView: View {
     @State private var calendarDate: Date = Date()
     @State private var draft: String = ""
     @State private var selectedMood: Int? = nil
+    @State private var chatService = ChatService()
 
     private var theme: Theme { ThemeCatalog.theme(forID: themeID) }
 
@@ -34,9 +35,12 @@ struct ContentView: View {
             VStack(spacing: 0) {
                 Composer(draft: $draft, selectedMood: $selectedMood, onLog: log)
                 Rectangle().fill(theme.line).frame(height: 1)
-                if case .section(.trends) = filter {
+                switch filter {
+                case .section(.trends):
                     TrendsView(entries: store.entries)
-                } else {
+                case .section(.chat):
+                    ChatView(entries: store.entries, service: chatService)
+                default:
                     EntriesList(
                         entries: filteredEntries,
                         filter: filter,
@@ -69,7 +73,7 @@ struct ContentView: View {
             return store.entries.filter { cal.isDateInToday($0.date) }
         case .section(.calendar):
             return store.entries.filter { cal.isDate($0.date, inSameDayAs: calendarDate) }
-        case .section(.allEntries), .section(.trends):
+        case .section(.allEntries), .section(.trends), .section(.chat):
             return store.entries
         case .tag(let name):
             return store.entries.filter { extractTags(from: $0.mood).contains(name) }

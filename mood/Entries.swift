@@ -69,6 +69,7 @@ struct EntriesList: View {
         case .section(.allEntries): "No entries yet. Start writing above or press ⌃⌥M from anywhere."
         case .section(.calendar): "Nothing logged on this day."
         case .section(.trends): "Nothing here yet."
+        case .section(.chat): "Nothing here yet."
         case .tag(let name): "No entries tagged #\(name)."
         }
     }
