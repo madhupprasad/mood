@@ -1,55 +1,18 @@
-<?xml version="1.0" standalone="yes" ?>
-<rss
-    xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle"
-    xmlns:dc="http://purl.org/dc/elements/1.1/"
-    version="2.0"
->
-    <channel>
-        <title>mood</title>
-        <link
-        >https://raw.githubusercontent.com/madhupprasad/mood/main/appcast.xml</link>
-        <description>Updates for mood</description>
-        <language>en</language>
-
-        <!--
-        Newest item goes at the top. The release.sh script prints a ready-to-paste
-        <item> block — copy it in, then push appcast.xml to the repo. Sparkle picks
-        up changes via this URL (declared as SUFeedURL in the target's Info.plist).
-
-        Example shape:
-
-        <item>
-            <title>Version 0.2</title>
-            <pubDate>Wed, 11 Jun 2025 14:00:00 +0000</pubDate>
-            <sparkle:version>2</sparkle:version>
-            <sparkle:shortVersionString>0.2</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>26.5</sparkle:minimumSystemVersion>
-            <description><![CDATA[
-                <ul>
-                    <li>What changed.</li>
-                </ul>
-            ]]></description>
-            <enclosure
-                url="https://github.com/madhupprasad/mood/releases/download/v0.2/mood-0.2.zip"
-                length="1234567"
-                type="application/octet-stream"
-                sparkle:edSignature="PASTE_SIGNATURE_HERE"/>
-        </item>
-        -->
-        <item>
-            <title>Version 0.1</title>
-            <pubDate>Thu, 11 Jun 2026 13:05:46 +0000</pubDate>
-            <sparkle:version>0.1</sparkle:version>
-            <sparkle:shortVersionString>0.1</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>26.5</sparkle:minimumSystemVersion>
-            <description
-            ><![CDATA[Initial Sparkle-enabled release.]]></description>
-            <enclosure
-                url="https://github.com/madhupprasad/mood/releases/download/v0.1/mood-0.1.zip"
-                type="application/octet-stream"
-                sparkle:edSignature="YsdKENXjEOJxrfE6AgXpjYhG9pycehvpocBTXSASssoFX5PjTUWFqwyqYZcDeJ1iIXaWu2FZ7NyIJaOy20zZBA=="
-                length="1695043"
-            />
-        </item>
-    </channel>
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>mood</title>
+    <link>https://raw.githubusercontent.com/madhupprasad/mood/main/appcast.xml</link>
+    <description>Updates for mood</description>
+    <language>en</language>
+    <item>
+      <title>Version 0.1</title>
+      <pubDate>Thu, 11 Jun 2026 13:05:46 +0000</pubDate>
+      <sparkle:version>0.1</sparkle:version>
+      <sparkle:shortVersionString>0.1</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>26.5</sparkle:minimumSystemVersion>
+      <description><![CDATA[Initial Sparkle-enabled release.]]></description>
+      <enclosure url="https://github.com/madhupprasad/mood/releases/download/v0.1/mood-0.1.zip" type="application/octet-stream" sparkle:edSignature="YsdKENXjEOJxrfE6AgXpjYhG9pycehvpocBTXSASssoFX5PjTUWFqwyqYZcDeJ1iIXaWu2FZ7NyIJaOy20zZBA==" length="1695043"/>
+    </item>
+  </channel>
 </rss>
