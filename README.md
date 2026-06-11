@@ -1,8 +1,22 @@
 # mood
 
-<img width="1440" height="900" alt="Screenshot 2026-06-08 at 8 04 40 PM" src="https://github.com/user-attachments/assets/68d0f8c6-8011-48f0-b934-dcd1c11a1129" />
+## A minimal macOS journaling app for tracking how you feel throughout the day. Built with SwiftUI.
 
-A minimal macOS journaling app for tracking how you feel throughout the day. Built with SwiftUI.
+## Main screen
+<img width="1437" height="900" alt="Screenshot 2026-06-12 at 1 24 14 AM" src="https://github.com/user-attachments/assets/9bc9c757-22ad-406d-bbd6-2e2a84b8727c" />
+
+## Spotlight like pop-up - make an entry from anywhere.
+<img width="1440" height="747" alt="Screenshot 2026-06-12 at 1 26 22 AM" src="https://github.com/user-attachments/assets/cf8cca50-0cc0-4e4c-a2ce-c058b62130ec" />
+
+## Themes
+<img width="220" height="126" alt="Screenshot 2026-06-12 at 1 25 08 AM" src="https://github.com/user-attachments/assets/428a1057-826a-4275-ab54-0ecfeb3aaaad" />
+
+## Talk with your past self - with AI
+<img width="1440" height="388" alt="Screenshot 2026-06-12 at 1 24 58 AM" src="https://github.com/user-attachments/assets/ebc0a75a-28c4-4a3e-a9ad-85209909e84d" />
+
+## TRENDS - Graphical analysis on your mood
+<img width="1440" height="900" alt="Screenshot 2026-06-12 at 1 24 24 AM" src="https://github.com/user-attachments/assets/01b8351a-07fb-4dc4-9ec0-82023cc79d03" />
+
 
 ## Features
 
