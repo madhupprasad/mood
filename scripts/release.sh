@@ -87,12 +87,20 @@ if grep -q "<title>Version ${VERSION}</title>" "$APPCAST_PATH" 2>/dev/null; then
     exit 1
 fi
 
-if ! command -v "$SIGN_UPDATE_TOOL" >/dev/null 2>&1; then
-    echo "✗ Cannot find sign_update at '$SIGN_UPDATE_TOOL'"
-    echo "  Set SIGN_UPDATE env var, e.g.:"
-    echo "    export SIGN_UPDATE=\"\$HOME/Library/Developer/Xcode/DerivedData/mood-*/SourcePackages/artifacts/sparkle/Sparkle/bin/sign_update\""
+# Resolve globs and try common Sparkle locations if explicit path is missing.
+RESOLVED_SIGN=$(compgen -G "$SIGN_UPDATE_TOOL" 2>/dev/null | head -1 || true)
+if [[ -z "$RESOLVED_SIGN" ]]; then
+    RESOLVED_SIGN=$(find "$HOME/Library/Developer/Xcode/DerivedData" -name sign_update -type f 2>/dev/null | head -1 || true)
+fi
+if [[ -z "$RESOLVED_SIGN" || ! -x "$RESOLVED_SIGN" ]]; then
+    echo "✗ Cannot find sign_update."
+    echo "  Tried: $SIGN_UPDATE_TOOL"
+    echo "  Also searched DerivedData — no luck."
+    echo "  Set SIGN_UPDATE explicitly, e.g.:"
+    echo "    export SIGN_UPDATE=\"\$HOME/Library/Developer/Xcode/DerivedData/mood-chveswyjieuinrgnaucxznepbgjc/SourcePackages/artifacts/sparkle/Sparkle/bin/sign_update\""
     exit 1
 fi
+SIGN_UPDATE_TOOL="$RESOLVED_SIGN"
 
 if ! command -v gh >/dev/null 2>&1; then
     echo "✗ Install the GitHub CLI: brew install gh"
