@@ -11,6 +11,15 @@
     <description>Updates for mood</description>
     <language>en</language>
     <item>
+    <title>Version 1.6</title>
+    <pubDate>Thu, 11 Jun 2026 19:50:24 +0000</pubDate>
+    <sparkle:version>1.6</sparkle:version>
+    <sparkle:shortVersionString>1.6</sparkle:shortVersionString>
+    <sparkle:minimumSystemVersion>26.5</sparkle:minimumSystemVersion>
+    <description><![CDATA[Harish kumar - issues fixed]]></description>
+    <enclosure url="https://github.com/madhupprasad/mood/releases/download/v1.6/mood-1.6.zip" type="application/octet-stream" sparkle:edSignature="SCSMmBXRbpALDwbNQC1Vi9lNyOsjf2siQ8f79KQlx+qOIR7CrDhqvJm83HMMIgXsEbBuBO2jWF/yfuU34u3QBg==" length="1701968"/>
+    </item>
+    <item>
     <title>Version 1.5.1</title>
     <pubDate>Thu, 11 Jun 2026 19:37:21 +0000</pubDate>
     <sparkle:version>1.5.1</sparkle:version>
