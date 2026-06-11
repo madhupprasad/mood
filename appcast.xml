@@ -1,18 +1,3 @@
-    <item>
-        <title>Version 0.1</title>
-        <pubDate>Thu, 11 Jun 2026 13:05:46 +0000</pubDate>
-        <sparkle:version>0.1</sparkle:version>
-        <sparkle:shortVersionString>0.1</sparkle:shortVersionString>
-        <sparkle:minimumSystemVersion>26.5</sparkle:minimumSystemVersion>
-        <description
-        ><![CDATA[Initial Sparkle-enabled release.]]></description>
-        <enclosure
-            url="https://github.com/madhupprasad/mood/releases/download/v0.1/mood-0.1.zip"
-            type="application/octet-stream"
-            sparkle:edSignature="YsdKENXjEOJxrfE6AgXpjYhG9pycehvpocBTXSASssoFX5PjTUWFqwyqYZcDeJ1iIXaWu2FZ7NyIJaOy20zZBA=="
-            length="1695043"
-        />
-    </item>
 <?xml version="1.0" standalone="yes" ?>
 <rss
     xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle"
@@ -51,5 +36,20 @@
                 sparkle:edSignature="PASTE_SIGNATURE_HERE"/>
         </item>
         -->
+        <item>
+            <title>Version 0.1</title>
+            <pubDate>Thu, 11 Jun 2026 13:05:46 +0000</pubDate>
+            <sparkle:version>0.1</sparkle:version>
+            <sparkle:shortVersionString>0.1</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>26.5</sparkle:minimumSystemVersion>
+            <description
+            ><![CDATA[Initial Sparkle-enabled release.]]></description>
+            <enclosure
+                url="https://github.com/madhupprasad/mood/releases/download/v0.1/mood-0.1.zip"
+                type="application/octet-stream"
+                sparkle:edSignature="YsdKENXjEOJxrfE6AgXpjYhG9pycehvpocBTXSASssoFX5PjTUWFqwyqYZcDeJ1iIXaWu2FZ7NyIJaOy20zZBA=="
+                length="1695043"
+            />
+        </item>
     </channel>
 </rss>
