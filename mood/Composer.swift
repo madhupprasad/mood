@@ -62,11 +62,24 @@ struct Composer: View {
                         Button {
                             selectedMood = (selectedMood == level.value) ? nil : level.value
                         } label: {
-                            moodShape(for: level)
-                                .frame(width: 20, height: 20)
-                                .background(
-                                    Circle().fill(selectedMood == level.value ? level.color.opacity(0.18) : Color.clear)
-                                )
+                            HStack(spacing: 5) {
+                                moodShape(for: level)
+                                    .frame(width: 12, height: 12)
+                                Text(level.name)
+                                    .font(.system(size: 11, weight: .medium))
+                                    .foregroundStyle(selectedMood == level.value ? level.color : theme.secondary)
+                            }
+                            .padding(.horizontal, 9)
+                            .padding(.vertical, 5)
+                            .background(
+                                Capsule()
+                                    .fill(selectedMood == level.value ? level.color.opacity(0.15) : theme.line.opacity(0.4))
+                            )
+                            .overlay(
+                                Capsule()
+                                    .stroke(selectedMood == level.value ? level.color.opacity(0.5) : Color.clear, lineWidth: 1)
+                            )
+                            .contentShape(Capsule())
                         }
                         .buttonStyle(.plain)
                         .help(level.name)
