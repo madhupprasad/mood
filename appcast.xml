@@ -1,18 +1,44 @@
-<?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<?xml version="1.0" encoding="utf-8" ?>
+<rss
+    version="2.0"
+    xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+>
   <channel>
     <title>mood</title>
-    <link>https://raw.githubusercontent.com/madhupprasad/mood/main/appcast.xml</link>
+    <link
+        >https://raw.githubusercontent.com/madhupprasad/mood/main/appcast.xml</link>
     <description>Updates for mood</description>
     <language>en</language>
+    <item>
+        <title>Version 1.2</title>
+        <pubDate>Thu, 11 Jun 2026 13:51:20 +0000</pubDate>
+        <sparkle:version>1.2</sparkle:version>
+        <sparkle:shortVersionString>1.2</sparkle:shortVersionString>
+        <sparkle:minimumSystemVersion>26.5</sparkle:minimumSystemVersion>
+        <description
+            ><![CDATA[Fix sandbox blocking Sparkle installer.]]></description>
+        <enclosure
+                url="https://github.com/madhupprasad/mood/releases/download/v1.2/mood-1.2.zip"
+                type="application/octet-stream"
+                sparkle:edSignature="4b1c/Xl67XLio0lVqSFurbqb4j7PJpPBU8uHKsXNzEWK3yEBK7t7Gq6dt4RM8ZOagRlMuHNEC1EaIPRvUsggBw=="
+                length="1694859"
+            />
+    </item>
     <item>
       <title>Version 1.1</title>
       <pubDate>Thu, 11 Jun 2026 13:35:44 +0000</pubDate>
       <sparkle:version>1.1</sparkle:version>
       <sparkle:shortVersionString>1.1</sparkle:shortVersionString>
       <sparkle:minimumSystemVersion>26.5</sparkle:minimumSystemVersion>
-      <description><![CDATA[Sparkle in-app updates, Chat with your past, new Trends visuals.]]></description>
-      <enclosure url="https://github.com/madhupprasad/mood/releases/download/v1.1/mood-1.1.zip" type="application/octet-stream" sparkle:edSignature="NWXTVc6cvolL8jbREpuCYq9G/EFd3wROfu8bvAhohyyumKr+XZLVzPUEYs7Gfmgl75ERGWYjbJu1RRLnTfXKAg==" length="1628091"/>
+      <description
+            ><![CDATA[Sparkle in-app updates, Chat with your past, new Trends visuals.]]></description>
+      <enclosure
+                url="https://github.com/madhupprasad/mood/releases/download/v1.1/mood-1.1.zip"
+                type="application/octet-stream"
+                sparkle:edSignature="NWXTVc6cvolL8jbREpuCYq9G/EFd3wROfu8bvAhohyyumKr+XZLVzPUEYs7Gfmgl75ERGWYjbJu1RRLnTfXKAg=="
+                length="1628091"
+            />
     </item>
     <item>
       <title>Version 0.1</title>
@@ -21,7 +47,12 @@
       <sparkle:shortVersionString>0.1</sparkle:shortVersionString>
       <sparkle:minimumSystemVersion>26.5</sparkle:minimumSystemVersion>
       <description><![CDATA[Initial Sparkle-enabled release.]]></description>
-      <enclosure url="https://github.com/madhupprasad/mood/releases/download/v0.1/mood-0.1.zip" type="application/octet-stream" sparkle:edSignature="YsdKENXjEOJxrfE6AgXpjYhG9pycehvpocBTXSASssoFX5PjTUWFqwyqYZcDeJ1iIXaWu2FZ7NyIJaOy20zZBA==" length="1695043"/>
+      <enclosure
+                url="https://github.com/madhupprasad/mood/releases/download/v0.1/mood-0.1.zip"
+                type="application/octet-stream"
+                sparkle:edSignature="YsdKENXjEOJxrfE6AgXpjYhG9pycehvpocBTXSASssoFX5PjTUWFqwyqYZcDeJ1iIXaWu2FZ7NyIJaOy20zZBA=="
+                length="1695043"
+            />
     </item>
   </channel>
 </rss>
