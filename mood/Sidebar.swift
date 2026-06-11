@@ -87,8 +87,10 @@ struct Sidebar: View {
                             Spacer()
                         }
                         .padding(.horizontal, 16)
-                        .padding(.vertical, 5)
+                        .padding(.vertical, 7)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                         .background(filter == .tag(tag) ? theme.selection : Color.clear)
+                        .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
                 }
@@ -148,8 +150,10 @@ private struct SidebarRow: View {
                 Spacer()
             }
             .padding(.horizontal, 16)
-            .padding(.vertical, 6)
+            .padding(.vertical, 8)
+            .frame(maxWidth: .infinity, alignment: .leading)
             .background(selected ? theme.selection : Color.clear)
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
     }
