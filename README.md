@@ -14,18 +14,28 @@ A minimal macOS journaling app for tracking how you feel throughout the day. Bui
 - **Voice dictation** — click the mic icon to dictate entries using Apple's on-device Speech framework.
 - **Persistent storage** — entries are saved as JSON in the app's Application Support directory and load on launch.
 
-## Requirements
+## Install
 
-- macOS 14 or later
-- Xcode 16+ to build
+1. Download `mood.zip` from the [latest release](https://github.com/madhupprasad/mood/releases/latest).
+2. Unzip it and drag `mood.app` into `/Applications`.
+3. **First launch**: right-click the app → **Open** → click **Open** in the dialog.
+   The app isn't notarized, so macOS will warn the first time. This bypass is a one-time step — subsequent launches open normally.
 
-## Running
+Requires **macOS 26.5 (Tahoe)** or later.
 
-1. Open `mood.xcodeproj` in Xcode.
-2. Select the `mood` scheme and your Mac as the run destination.
-3. ⌘R to build and run.
+When you first use the mic button, macOS will ask for Microphone and Speech Recognition permission.
 
-On first launch the app will request Microphone and Speech Recognition permissions when you use the mic button.
+## Build from source
+
+If you'd rather build it yourself or hack on the app:
+
+- macOS 26.5 or later
+- Xcode 16+ (or whatever ships with Tahoe)
+
+1. Clone the repo.
+2. Open `mood.xcodeproj` in Xcode.
+3. Select the `mood` scheme and your Mac as the run destination.
+4. ⌘R to build and run.
 
 ## Keyboard shortcuts
 
