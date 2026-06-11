@@ -19,7 +19,8 @@ A minimal macOS journaling app for tracking how you feel throughout the day. Bui
 1. Download `mood.zip` from the [latest release](https://github.com/madhupprasad/mood/releases/latest).
 2. Unzip it and drag `mood.app` into `/Applications`.
 3. **First launch**: right-click the app → **Open** → click **Open** in the dialog.
-   The app isn't notarized, so macOS will warn the first time. This bypass is a one-time step — subsequent launches open normally.
+
+Since the app is unsigned, friends will see *"Apple could not verify…"* the first time. Open it once via **right-click → Open → Open**, or **System Settings → Privacy & Security → Open Anyway**. After that it launches normally. Annoying but free.
 
 Requires **macOS 26.5 (Tahoe)** or later.
 
