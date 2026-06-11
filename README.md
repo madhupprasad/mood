@@ -88,36 +88,13 @@ The app uses [Sparkle](https://sparkle-project.org) so users get update prompts 
 
 ### Cutting a release
 
-**Preferred — GitHub Actions** (builds from the literal commit, signs in CI, never touches your laptop):
-
-```bash
-git tag v1.3
-git push --tags
-```
-
-That triggers `.github/workflows/release.yml`, which archives + exports + zips the `.app`, signs with `SPARKLE_PRIVATE_KEY` from repo secrets, creates the GitHub release, updates `appcast.xml`, and pushes. Friends with a previous version get an in-app update prompt automatically.
-
-You can also trigger it manually from **GitHub → Actions → Release → Run workflow** and fill in version + notes.
-
-**One-time setup for the Action:**
-
-1. Export your Sparkle private key:
-   ```bash
-   ~/Library/Developer/Xcode/DerivedData/mood-*/SourcePackages/artifacts/sparkle/Sparkle/bin/generate_keys -x /tmp/sparkle.key
-   ```
-2. Copy the contents of `/tmp/sparkle.key`.
-3. Repo → **Settings → Secrets and variables → Actions → New repository secret**:
-   - Name: `SPARKLE_PRIVATE_KEY`
-   - Value: paste the key
-4. Securely delete the local copy: `rm -P /tmp/sparkle.key`
-
-**Local fallback** (your laptop, useful if Actions is down):
-
 ```bash
 ./scripts/release.sh 1.3 "Notes here"
 ```
 
-Refuses to run unless `main` is clean and synced with `origin/main`, so the released binary is provably from the same commit on GitHub.
+The script refuses to run unless `main` is clean and synced with `origin/main`, so the released binary is built from the same commit on GitHub. It archives + exports + zips the `.app`, signs with your Sparkle key, creates the GitHub release, inserts a new `<item>` at the top of `appcast.xml`, commits and pushes.
+
+Friends with a previous version get an in-app update prompt automatically next time they launch (or instantly via **Check for Updates…**).
 
 ## Project structure
 

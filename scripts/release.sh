@@ -45,9 +45,40 @@ export PATH="/opt/homebrew/bin:$PATH"
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$REPO_ROOT"
 
-if [[ -n $(git status --porcelain | grep -v '^\?\?') ]]; then
+if [[ -n $(git status --porcelain | grep -v '^??') ]]; then
     echo "✗ Working tree has uncommitted changes. Commit or stash first."
     git status --porcelain
+    exit 1
+fi
+
+# Require local main to be in sync with origin/main so the released binary
+# is built from exactly the source that's already on GitHub.
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+if [[ "$BRANCH" != "main" ]]; then
+    echo "✗ Releases must be cut from main. Currently on '$BRANCH'."
+    exit 1
+fi
+
+echo "▸ Fetching origin…"
+git fetch origin main --quiet
+
+LOCAL=$(git rev-parse @)
+REMOTE=$(git rev-parse @{u} 2>/dev/null || echo "")
+BASE=$(git merge-base @ @{u} 2>/dev/null || echo "")
+
+if [[ -z "$REMOTE" ]]; then
+    echo "✗ No upstream tracking branch. Set one with: git push -u origin main"
+    exit 1
+fi
+
+if [[ "$LOCAL" != "$REMOTE" ]]; then
+    if [[ "$LOCAL" == "$BASE" ]]; then
+        echo "✗ Local main is BEHIND origin/main. Run: git pull --ff-only"
+    elif [[ "$REMOTE" == "$BASE" ]]; then
+        echo "✗ Local main has UNPUSHED commits. Run: git push  (then re-run release)"
+    else
+        echo "✗ Local main has diverged from origin/main. Reconcile manually."
+    fi
     exit 1
 fi
 
