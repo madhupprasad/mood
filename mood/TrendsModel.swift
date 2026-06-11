@@ -24,8 +24,8 @@ struct MoodLevel: Identifiable {
         MoodLevel(value: 5, shape: "▲", name: "Elevated", rgb: (0x7f / 255, 0xbf / 255, 0x86 / 255)),
         MoodLevel(value: 4, shape: "●", name: "Good",     rgb: (0xa8 / 255, 0xc7 / 255, 0x79 / 255)),
         MoodLevel(value: 3, shape: "■", name: "Steady",   rgb: (0xcd / 255, 0xbf / 255, 0x76 / 255)),
-        MoodLevel(value: 2, shape: "▼", name: "Low",      rgb: (0xd4 / 255, 0x9a / 255, 0x68 / 255)),
         MoodLevel(value: 1, shape: "○", name: "Flat",     rgb: (0xc8 / 255, 0x7a / 255, 0x72 / 255)),
+        MoodLevel(value: 2, shape: "▼", name: "Low",      rgb: (0xd4 / 255, 0x9a / 255, 0x68 / 255)),
     ]
 
     static func nearest(to value: Double) -> MoodLevel {
