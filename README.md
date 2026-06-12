@@ -2,6 +2,8 @@
 
 ## A minimal macOS journaling app for tracking how you feel throughout the day. Built with SwiftUI.
 
+**Website**: <https://madhupprasad.github.io/mood/> · **Download**: [latest release](https://github.com/madhupprasad/mood/releases/latest)
+
 ## Main screen
 <img width="1437" height="900" alt="Screenshot 2026-06-12 at 1 24 14 AM" src="https://github.com/user-attachments/assets/9bc9c757-22ad-406d-bbd6-2e2a84b8727c" />
 
