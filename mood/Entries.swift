@@ -41,6 +41,19 @@ struct EntriesList: View {
     let filter: SidebarFilter
     let calendarDate: Date
 
+    private static let greetings: [String] = [
+        "good to see you.",
+        "glad you're here.",
+        "welcome back.",
+        "hi again.",
+        "take your time.",
+        "here whenever.",
+    ]
+    private var greeting: String {
+        // Stable per app launch so it doesn't flicker between view updates.
+        Self.greetings.randomElement() ?? "hi again."
+    }
+
     private var groups: [(label: String, items: [MoodEntry])] {
         let cal = Calendar.current
         let now = Date()
@@ -70,6 +83,7 @@ struct EntriesList: View {
         case .section(.calendar): "Nothing logged on this day."
         case .section(.trends): "Nothing here yet."
         case .section(.chat): "Nothing here yet."
+        case .section(.games): "Nothing here yet."
         case .tag(let name): "No entries tagged #\(name)."
         }
     }
@@ -97,6 +111,12 @@ struct EntriesList: View {
                         .font(.system(size: 10))
                         .foregroundStyle(theme.secondary)
                     Spacer()
+                    if case .section(.allEntries) = filter {
+                        Text(greeting)
+                            .font(.system(size: 11))
+                            .foregroundStyle(theme.secondary)
+                            .italic()
+                    }
                 }
                 .padding(.horizontal, 24)
                 .padding(.vertical, 14)

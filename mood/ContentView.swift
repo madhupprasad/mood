@@ -40,6 +40,8 @@ struct ContentView: View {
                     TrendsView(entries: store.entries)
                 case .section(.chat):
                     ChatView(entries: store.entries, service: chatService)
+                case .section(.games):
+                    GamesView()
                 default:
                     EntriesList(
                         entries: filteredEntries,
@@ -73,7 +75,7 @@ struct ContentView: View {
             return store.entries.filter { cal.isDateInToday($0.date) }
         case .section(.calendar):
             return store.entries.filter { cal.isDate($0.date, inSameDayAs: calendarDate) }
-        case .section(.allEntries), .section(.trends), .section(.chat):
+        case .section(.allEntries), .section(.trends), .section(.chat), .section(.games):
             return store.entries
         case .tag(let name):
             return store.entries.filter { extractTags(from: $0.mood).contains(name) }
