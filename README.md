@@ -6,23 +6,6 @@
 
 I wanted somewhere small to type into about how I was feeling. Not a tracker. Not a daily prompt. Not a calendar with a streak that yells at me. A blinking cursor and a Return key. So I built one. mood is what I made.
 
-## Screens
-
-### Main
-<img width="1437" height="900" alt="mood main screen" src="https://github.com/user-attachments/assets/9bc9c757-22ad-406d-bbd6-2e2a84b8727c" />
-
-### Spotlight-style quick entry, from anywhere
-<img width="1440" height="747" alt="floating quick-entry panel" src="https://github.com/user-attachments/assets/cf8cca50-0cc0-4e4c-a2ce-c058b62130ec" />
-
-### Five themes that recolor everything
-<img width="220" height="126" alt="theme picker with five swatches" src="https://github.com/user-attachments/assets/428a1057-826a-4275-ab54-0ecfeb3aaaad" />
-
-### Chat with your past — on-device AI
-<img width="1440" height="388" alt="AI chat that reads your recent entries" src="https://github.com/user-attachments/assets/ebc0a75a-28c4-4a3e-a9ad-85209909e84d" />
-
-### Trends — read it like the weather
-<img width="1440" height="900" alt="trends dashboard with line chart and stat tiles" src="https://github.com/user-attachments/assets/01b8351a-07fb-4dc4-9ec0-82023cc79d03" />
-
 ## What it does
 
 - **Just types.** Write something, hit Return. Date and time get attached. That's an entry. No required fields, no scoring.
