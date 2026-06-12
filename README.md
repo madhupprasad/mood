@@ -28,9 +28,13 @@ I wanted somewhere small to type into about how I was feeling. Not a tracker. No
 
 1. Download `mood.zip` from the [latest release](https://github.com/madhupprasad/mood/releases/latest).
 2. Unzip, drag `mood.app` into `/Applications`.
-3. **First launch**: right-click the app → **Open** → click **Open** in the dialog.
+3. **Double-click `mood.app`.** macOS will block it with *"Apple could not verify mood is free of malware that may harm your Mac"* — click **Done** to dismiss.
+4. Open **System Settings → Privacy & Security** → scroll to the **Security** section.
+5. You'll see a line about *"mood was blocked to protect your Mac."* Click **Open Anyway**.
+6. A new dialog asks you to confirm; enter your Mac password if prompted, then click **Open Anyway** again.
+7. mood launches. From now on, double-clicking the app just opens it normally — the warning is one-time.
 
-macOS warns the first time because mood isn't signed (I haven't sent Apple their $99/yr yet). One-time right-click → Open and you're set; every launch after is normal. macOS will also ask for Microphone + Speech Recognition the first time you use dictation.
+macOS does this dance because mood isn't signed with an Apple Developer ID (I haven't sent Apple their $99/yr). Apple removed the older right-click → Open shortcut in macOS Sequoia, so the System Settings route is the only path. macOS will also ask for Microphone + Speech Recognition the first time you use dictation.
 
 ## Keyboard
 
