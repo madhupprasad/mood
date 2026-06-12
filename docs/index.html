@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>mood — a small place to track how you feel</title>
+  <meta name="description" content="mood is a minimal macOS journaling app for tracking how you feel throughout the day. Local-first, on-device AI, free.">
+  <meta property="og:title" content="mood — a small place to track how you feel">
+  <meta property="og:description" content="A minimal macOS journaling app. Local-first. On-device AI. Free.">
+  <meta property="og:image" content="https://github.com/user-attachments/assets/9bc9c757-22ad-406d-bbd6-2e2a84b8727c">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <nav class="nav">
+    <a class="brand" href="#top">
+      <span class="dot"></span>
+      <span>mood</span>
+    </a>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#install">Install</a>
+      <a href="#privacy">Privacy</a>
+      <a class="ext" href="https://github.com/madhupprasad/mood" target="_blank" rel="noopener">GitHub ↗</a>
+    </div>
+  </nav>
+
+  <header class="hero" id="top">
+    <p class="kicker">A macOS app for journaling</p>
+    <h1>A small place to track <br>how you feel.</h1>
+    <p class="sub">Type a thought. Hit Return. That's it. Tags, trends, on-device AI — quietly waiting if you want them.</p>
+    <div class="cta">
+      <a class="btn primary" href="https://github.com/madhupprasad/mood/releases/latest">
+        Download for macOS
+      </a>
+      <a class="btn ghost" href="https://github.com/madhupprasad/mood" target="_blank" rel="noopener">View source</a>
+    </div>
+    <p class="meta">Requires macOS 26.5 (Tahoe) or later · Free · Open source</p>
+    <div class="screenshot-frame">
+      <img src="https://github.com/user-attachments/assets/9bc9c757-22ad-406d-bbd6-2e2a84b8727c"
+           alt="mood main screen — journal entries with timestamps and tags"
+           loading="eager">
+    </div>
+  </header>
+
+  <section class="features" id="features">
+    <div class="feature">
+      <h3>Just write</h3>
+      <p>Type, hit Return, it's saved with a timestamp. No fields. No prompts. No streak shaming.</p>
+    </div>
+    <div class="feature">
+      <h3>From anywhere</h3>
+      <p>Press <kbd>⌃⌥M</kbd> anywhere on your Mac. A spotlight-style bar pops up. Type. Hit Return. Done.</p>
+    </div>
+    <div class="feature">
+      <h3>Inline tags</h3>
+      <p>Type <code>#anything</code> and it becomes a tag automatically. The sidebar picks them up. Filter with one click.</p>
+    </div>
+    <div class="feature">
+      <h3>Trends, gently</h3>
+      <p>Mood over time, rhythm of the day, consistency heatmap. No diagnoses. Just shapes.</p>
+    </div>
+    <div class="feature">
+      <h3>Talk with your past</h3>
+      <p>A supportive AI you can ask about how you've been feeling. Runs entirely on your Mac via Apple Intelligence. Nothing leaves.</p>
+    </div>
+    <div class="feature">
+      <h3>Updates itself</h3>
+      <p>New versions land as an in-app prompt. Click <b>Install</b>. Done. No more re-downloading.</p>
+    </div>
+  </section>
+
+  <section class="strip">
+    <div class="strip-grid">
+      <figure>
+        <img src="https://github.com/user-attachments/assets/cf8cca50-0cc0-4e4c-a2ce-c058b62130ec"
+             alt="Spotlight-like floating panel for quick entry" loading="lazy">
+        <figcaption>Floating quick-entry panel · ⌃⌥M</figcaption>
+      </figure>
+      <figure>
+        <img src="https://github.com/user-attachments/assets/01b8351a-07fb-4dc4-9ec0-82023cc79d03"
+             alt="Trends dashboard with mood over time chart and stat tiles" loading="lazy">
+        <figcaption>Trends — at a glance</figcaption>
+      </figure>
+      <figure>
+        <img src="https://github.com/user-attachments/assets/ebc0a75a-28c4-4a3e-a9ad-85209909e84d"
+             alt="Chat with your past — supportive AI conversation" loading="lazy">
+        <figcaption>Chat with your past · on-device AI</figcaption>
+      </figure>
+      <figure>
+        <img src="https://github.com/user-attachments/assets/428a1057-826a-4275-ab54-0ecfeb3aaaad"
+             alt="Theme picker showing five color schemes" loading="lazy">
+        <figcaption>Five themes · changes everything</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="install" id="install">
+    <h2>Install</h2>
+    <ol>
+      <li>
+        <span class="num">1</span>
+        <div>
+          <p><b>Download</b> the latest <code>mood.zip</code>.</p>
+          <a class="btn primary" href="https://github.com/madhupprasad/mood/releases/latest">Get the latest release</a>
+        </div>
+      </li>
+      <li>
+        <span class="num">2</span>
+        <div>
+          <p><b>Unzip and drag</b> <code>mood.app</code> into <code>/Applications</code>.</p>
+        </div>
+      </li>
+      <li>
+        <span class="num">3</span>
+        <div>
+          <p><b>First launch</b>: right-click the app → <b>Open</b> → click <b>Open</b> in the dialog.</p>
+          <p class="hint">
+            Since mood is unsigned, macOS shows a one-time "Apple could not verify…" warning. After the right-click → Open dance, every launch after is normal.
+          </p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <section class="privacy" id="privacy">
+    <h2>Stays on your Mac</h2>
+    <p>
+      Every entry lives as plain JSON in <code>~/Library/Application Support/com.tapasya.mood/</code>.
+      Nothing is uploaded. The AI Chat runs entirely on-device via Apple Intelligence — your journal text never leaves your machine.
+    </p>
+    <p class="aside">
+      Open source under the same roof. Audit the code, fork it, take your data anywhere. <a href="https://github.com/madhupprasad/mood" target="_blank" rel="noopener">github.com/madhupprasad/mood ↗</a>
+    </p>
+  </section>
+
+  <footer>
+    <p>Built with care by <a href="https://github.com/madhupprasad" target="_blank" rel="noopener">Madhupprasad</a>.</p>
+    <p class="small">SwiftUI · macOS Tahoe · Sparkle for updates · No analytics, no telemetry.</p>
+  </footer>
+
+</body>
+</html>
