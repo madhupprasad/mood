@@ -6,18 +6,23 @@
 //
 
 import SwiftUI
+
+#if os(macOS)
 import AppKit
 import Carbon.HIToolbox
+#endif
 
-#if canImport(Sparkle)
+#if canImport(Sparkle) && os(macOS)
 import Sparkle
 #endif
 
 @main
 struct moodApp: App {
+    #if os(macOS)
     private let hotKeyManager = HotKeyManager()
+    #endif
 
-    #if canImport(Sparkle)
+    #if canImport(Sparkle) && os(macOS)
     private let updaterController = SPUStandardUpdaterController(
         startingUpdater: true,
         updaterDelegate: nil,
@@ -26,13 +31,16 @@ struct moodApp: App {
     #endif
 
     init() {
+        #if os(macOS)
         hotKeyManager.register(keyCode: UInt32(kVK_ANSI_M),
                                modifiers: UInt32(controlKey | optionKey)) {
             QuickEntryPanel.shared.toggle()
         }
+        #endif
     }
 
     var body: some Scene {
+        #if os(macOS)
         WindowGroup {
             ContentView()
         }
@@ -61,5 +69,10 @@ struct moodApp: App {
             }
             .keyboardShortcut("q")
         }
+        #else
+        WindowGroup {
+            MoodRootView_iOS()
+        }
+        #endif
     }
 }

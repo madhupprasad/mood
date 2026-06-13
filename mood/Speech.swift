@@ -31,6 +31,19 @@ final class SpeechTranscriber {
 
         guard let recognizer, recognizer.isAvailable else { state = .unavailable; return }
 
+        #if os(iOS)
+        // iOS requires an active audio session before the engine can tap the
+        // mic; macOS has no AVAudioSession.
+        do {
+            let session = AVAudioSession.sharedInstance()
+            try session.setCategory(.record, mode: .measurement, options: .duckOthers)
+            try session.setActive(true, options: .notifyOthersOnDeactivation)
+        } catch {
+            state = .unavailable
+            return
+        }
+        #endif
+
         let request = SFSpeechAudioBufferRecognitionRequest()
         request.shouldReportPartialResults = true
         if recognizer.supportsOnDeviceRecognition {
@@ -78,5 +91,9 @@ final class SpeechTranscriber {
         request = nil
         task = nil
         state = .idle
+
+        #if os(iOS)
+        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+        #endif
     }
 }

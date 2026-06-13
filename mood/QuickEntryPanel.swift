@@ -2,6 +2,12 @@
 //  QuickEntryPanel.swift
 //  mood
 //
+//  macOS-only: global hot key (Carbon) + floating NSPanel quick-entry bar.
+//  iOS has no global hotkeys and no cross-app floating windows, so this
+//  whole file is compiled out on iOS.
+//
+
+#if os(macOS)
 
 import SwiftUI
 import AppKit
@@ -113,3 +119,5 @@ private struct QuickEntryView: View {
         onClose()
     }
 }
+
+#endif

@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		C2D7C8362FDAD633004B7DAB /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = C2D7C8352FDAD633004B7DAB /* Sparkle */; };
+		C2D7C8362FDAD633004B7DAB /* Sparkle in Frameworks */ = {isa = PBXBuildFile; platformFilters = (macos, ); productRef = C2D7C8352FDAD633004B7DAB /* Sparkle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */

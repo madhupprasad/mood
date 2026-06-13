@@ -79,7 +79,11 @@ struct EntriesList: View {
     private var emptyMessage: String {
         switch filter {
         case .section(.today): "Nothing logged today yet."
+        #if os(macOS)
         case .section(.allEntries): "No entries yet. Start writing above or press ⌃⌥M from anywhere."
+        #else
+        case .section(.allEntries): "No entries yet. Pick a mood on the Write tab to start."
+        #endif
         case .section(.calendar): "Nothing logged on this day."
         case .section(.trends): "Nothing here yet."
         case .section(.chat): "Nothing here yet."

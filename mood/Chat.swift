@@ -157,7 +157,8 @@ final class ChatService {
             } else {
                 moodTag = ""
             }
-            return "[\(when)\(moodTag)] \(entry.mood)"
+            let body = entry.mood.trimmingCharacters(in: .whitespacesAndNewlines)
+            return "[\(when)\(moodTag)] \(body.isEmpty ? "(no note)" : body)"
         }
 
         return Context(

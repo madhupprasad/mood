@@ -279,7 +279,11 @@ struct VentSheet: View {
             .animation(.easeOut(duration: 0.3), value: burning)
         }
         .padding(22)
+        #if os(macOS)
         .frame(width: 520, height: 380)
+        #else
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        #endif
         .background(theme.card)
         .onAppear {
             DispatchQueue.main.async { focused = true }
@@ -355,7 +359,9 @@ struct VentSheet: View {
     private func burnIt() {
         guard canBurn else { return }
         focused = false
+        #if os(macOS)
         BurnSoundPlayer.shared.play()
+        #endif
         withAnimation(.easeOut(duration: 0.6)) { burning = true }
 
         Task {
