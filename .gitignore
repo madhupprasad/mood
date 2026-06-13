@@ -38,6 +38,17 @@ fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
 
+# Android / Gradle (the android/ app target)
+android/local.properties
+android/.gradle/
+android/build/
+android/app/build/
+android/captures/
+android/.cxx/
+.gradle/
+*.iml
+.idea/
+
 # Misc
 *.swp
 *.bak

@@ -1,0 +1,8 @@
+<resources>
+    <style name="Theme.Mood" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">#F7F5ED</item>
+        <item name="android:navigationBarColor">#F7F5ED</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowBackground">@color/ic_launcher_background</item>
+    </style>
+</resources>

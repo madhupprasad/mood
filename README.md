@@ -1,10 +1,24 @@
 # mood
 
-> a tiny macOS journal. cream-colored, mostly text, hard to feel bad in.
+> a tiny journal. cream-colored, mostly text, hard to feel bad in. macOS today — iOS and Android on the way.
 
 [**Website**](https://madhupprasad.github.io/mood/) · [**Download for macOS**](https://github.com/madhupprasad/mood/releases/latest) · macOS 26.5 (Tahoe) or later
 
 I wanted somewhere small to type into about how I was feeling. Not a tracker. Not a daily prompt. Not a calendar with a streak that yells at me. A blinking cursor and a Return key. So I built one. mood is what I made.
+
+## Platforms
+
+mood started on macOS and is growing into your pocket. The macOS app is the released one; the mobile apps are in development and build from source today. All three share the same idea and the same plain-JSON storage, but each fits its platform.
+
+| Platform | Status | How to get it |
+|---|---|---|
+| **macOS** 26.5+ | Released | [Download](https://github.com/madhupprasad/mood/releases/latest) |
+| **iOS** 26.5+ | In development | Build from source (Xcode) |
+| **Android** 8.0+ (API 26) | In development | Build from source (Android Studio) |
+
+- **macOS** has the full kit — the `⌃⌥M` global quick-entry bar, menu-bar extra, and Sparkle in-app updates.
+- **iOS** keeps the writing, mood, trends, voice, and on-device Chat, in a Daylio-style mood-first composer. No global hotkey (the OS has none); updates come from the App Store.
+- **Android** (Kotlin + Jetpack Compose) has the mood-first composer, entries, and trends, with voice and tags landing next. **Chat is omitted for now** — Android's on-device LLM story isn't there yet, and mood won't ship your journal to a cloud model.
 
 ## What it does
 
@@ -36,7 +50,7 @@ I wanted somewhere small to type into about how I was feeling. Not a tracker. No
 
 macOS does this dance because mood isn't signed with an Apple Developer ID (I haven't sent Apple their $99/yr). Apple removed the older right-click → Open shortcut in macOS Sequoia, so the System Settings route is the only path. macOS will also ask for Microphone + Speech Recognition the first time you use dictation.
 
-## Keyboard
+## Keyboard (macOS)
 
 | Shortcut | What it does |
 |---|---|
@@ -59,7 +73,12 @@ Want to stop? Your data doesn't disappear with the app — it just sits where it
 
 ## Updates
 
-Sparkle. The app checks GitHub for new releases when you launch it. If there's one, you get a small in-app dialog: "A new version is available." Install or skip. That's the whole loop. No background telemetry, no analytics. The feed it checks is [`appcast.xml`](https://raw.githubusercontent.com/madhupprasad/mood/main/appcast.xml) — block it if you'd rather not check.
+Sparkle. The app checks GitHub for new releases when you launch it. If there's one, you get a small in-app dialog: "A new version is available." Install or skip. That's the whole loop. No background telemetry, no analytics. The feed it checks is [`appcast.xml`](https://raw.githubusercontent.com/madhupprasad/mood/main/appcast.xml) — block it if you'd rather not check. (iOS and Android get updates through their own app stores; no Sparkle there.)
+
+## Building from source
+
+- **Apple (macOS + iOS):** open `mood.xcodeproj` in Xcode. It's a single multiplatform target — pick a Mac or an iPhone/Simulator destination and run. Building for a physical iPhone needs an Apple Developer account for signing.
+- **Android:** open the `android/` folder in Android Studio, let it Gradle-sync, create an emulator in **Device Manager**, then **Run**. Min SDK 26 (Android 8.0); the project uses Jetpack Compose and has no external charting dependencies.
 
 ---
 
