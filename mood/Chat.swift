@@ -157,8 +157,9 @@ final class ChatService {
             } else {
                 moodTag = ""
             }
+            let emoTag = entry.emotions.isEmpty ? "" : " · \(entry.emotions.joined(separator: ", "))"
             let body = entry.mood.trimmingCharacters(in: .whitespacesAndNewlines)
-            return "[\(when)\(moodTag)] \(body.isEmpty ? "(no note)" : body)"
+            return "[\(when)\(moodTag)\(emoTag)] \(body.isEmpty ? "(no note)" : body)"
         }
 
         return Context(

@@ -9,6 +9,7 @@ struct Composer: View {
     @Environment(\.theme) private var theme
     @Binding var draft: String
     @Binding var selectedMood: Int?
+    @Binding var selectedEmotions: Set<String>
     let onLog: () -> Void
 
     @State private var now: Date = Date()
@@ -61,7 +62,11 @@ struct Composer: View {
                 HStack(spacing: 6) {
                     ForEach(MoodLevel.all, id: \.value) { level in
                         Button {
-                            selectedMood = (selectedMood == level.value) ? nil : level.value
+                            let newValue = (selectedMood == level.value) ? nil : level.value
+                            // Feelings are specific to a mood level, so switching
+                            // (or clearing) the mood clears any chosen feelings.
+                            if newValue != selectedMood { selectedEmotions = [] }
+                            selectedMood = newValue
                         } label: {
                             HStack(spacing: 5) {
                                 moodShape(for: level)
@@ -106,6 +111,39 @@ struct Composer: View {
                 .disabled(draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
             }
             .padding(.leading, 76)
+
+            // Optional feeling chips — only appear once a mood is chosen, and
+            // are scoped to that mood level. Name it if you want; skip it freely.
+            if let mv = selectedMood, let level = MoodLevel.all.first(where: { $0.value == mv }) {
+                HStack(spacing: 6) {
+                    Text("FEELING")
+                        .font(.system(size: 10, weight: .semibold))
+                        .tracking(0.8)
+                        .foregroundStyle(theme.secondary)
+                    ForEach(MoodLevel.emotions(for: mv), id: \.self) { emotion in
+                        let on = selectedEmotions.contains(emotion)
+                        Button {
+                            if on { selectedEmotions.remove(emotion) } else { selectedEmotions.insert(emotion) }
+                        } label: {
+                            Text(emotion)
+                                .font(.system(size: 11, weight: .medium))
+                                .foregroundStyle(on ? level.color : theme.secondary)
+                                .padding(.horizontal, 9)
+                                .padding(.vertical, 5)
+                                .background(
+                                    Capsule().fill(on ? level.color.opacity(0.15) : theme.line.opacity(0.4))
+                                )
+                                .overlay(
+                                    Capsule().stroke(on ? level.color.opacity(0.5) : Color.clear, lineWidth: 1)
+                                )
+                                .contentShape(Capsule())
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    Spacer()
+                }
+                .padding(.leading, 76)
+            }
 
             Button { showVent = true } label: {
                 Text("or vent something you don't want to keep")

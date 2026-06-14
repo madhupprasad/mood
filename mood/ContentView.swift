@@ -14,6 +14,7 @@ struct ContentView: View {
     @State private var calendarDate: Date = Date()
     @State private var draft: String = ""
     @State private var selectedMood: Int? = nil
+    @State private var selectedEmotions: Set<String> = []
     @State private var chatService = ChatService()
 
     private var theme: Theme { ThemeCatalog.theme(forID: themeID) }
@@ -33,7 +34,7 @@ struct ContentView: View {
                 .frame(width: 1)
 
             VStack(spacing: 0) {
-                Composer(draft: $draft, selectedMood: $selectedMood, onLog: log)
+                Composer(draft: $draft, selectedMood: $selectedMood, selectedEmotions: $selectedEmotions, onLog: log)
                 Rectangle().fill(theme.line).frame(height: 1)
                 switch filter {
                 case .section(.trends):
@@ -85,9 +86,10 @@ struct ContentView: View {
     private func log() {
         let trimmed = draft.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return }
-        store.add(trimmed, moodValue: selectedMood)
+        store.add(trimmed, moodValue: selectedMood, emotions: Array(selectedEmotions))
         draft = ""
         selectedMood = nil
+        selectedEmotions = []
     }
 }
 

@@ -11,17 +11,19 @@ struct MoodEntry: Identifiable, Codable {
     let date: Date
     var moodValue: Int?
     var moodInferred: Bool = false
+    var emotions: [String] = []
 
-    init(id: UUID = UUID(), mood: String, date: Date, moodValue: Int? = nil, moodInferred: Bool = false) {
+    init(id: UUID = UUID(), mood: String, date: Date, moodValue: Int? = nil, moodInferred: Bool = false, emotions: [String] = []) {
         self.id = id
         self.mood = mood
         self.date = date
         self.moodValue = moodValue
         self.moodInferred = moodInferred
+        self.emotions = emotions
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, mood, date, moodValue, moodInferred
+        case id, mood, date, moodValue, moodInferred, emotions
     }
 
     // Custom decoder so additions of new fields never break older entries on disk.
@@ -32,6 +34,7 @@ struct MoodEntry: Identifiable, Codable {
         self.date = try c.decode(Date.self, forKey: .date)
         self.moodValue = try c.decodeIfPresent(Int.self, forKey: .moodValue)
         self.moodInferred = try c.decodeIfPresent(Bool.self, forKey: .moodInferred) ?? false
+        self.emotions = try c.decodeIfPresent([String].self, forKey: .emotions) ?? []
     }
 }
 
@@ -53,8 +56,8 @@ final class MoodStore {
         load()
     }
 
-    func add(_ mood: String, moodValue: Int? = nil) {
-        let entry = MoodEntry(mood: mood, date: Date(), moodValue: moodValue, moodInferred: false)
+    func add(_ mood: String, moodValue: Int? = nil, emotions: [String] = []) {
+        let entry = MoodEntry(mood: mood, date: Date(), moodValue: moodValue, moodInferred: false, emotions: emotions)
         entries.insert(entry, at: 0)
         save()
     }

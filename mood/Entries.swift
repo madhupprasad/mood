@@ -193,6 +193,18 @@ private struct EntryRow: View {
                         }
                     }
                 }
+                if !entry.emotions.isEmpty {
+                    HStack(spacing: 6) {
+                        ForEach(entry.emotions, id: \.self) { emotion in
+                            Text(emotion)
+                                .font(.system(size: 10, weight: .medium))
+                                .foregroundStyle(emotionTint)
+                                .padding(.horizontal, 7)
+                                .padding(.vertical, 2)
+                                .background(Capsule().fill(emotionTint.opacity(0.12)))
+                        }
+                    }
+                }
             }
 
             Spacer()
@@ -216,5 +228,14 @@ private struct EntryRow: View {
         } else {
             Circle().fill(theme.accent).frame(width: 6, height: 6)
         }
+    }
+
+    /// Feeling chips borrow the entry's mood-level color, falling back to the
+    /// accent when there's no rating.
+    private var emotionTint: Color {
+        if let v = entry.moodValue, let level = MoodLevel.all.first(where: { $0.value == v }) {
+            return level.color
+        }
+        return theme.accent
     }
 }

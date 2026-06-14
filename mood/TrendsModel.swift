@@ -32,6 +32,20 @@ struct MoodLevel: Identifiable {
         all.min(by: { abs(Double($0.value) - value) < abs(Double($1.value) - value) }) ?? all[2]
     }
 
+    /// Optional, warm-toned feeling words offered for each mood level. The
+    /// level you already picked is the "category", so naming the specific
+    /// feeling is one quick, optional tap — no separate drill-down.
+    static func emotions(for value: Int) -> [String] {
+        switch value {
+        case 5: ["grateful", "proud", "excited", "joyful", "alive"]
+        case 4: ["content", "relieved", "rested", "connected", "hopeful"]
+        case 3: ["okay", "neutral", "focused", "present", "steady"]
+        case 2: ["sad", "anxious", "frustrated", "lonely", "discouraged"]
+        case 1: ["numb", "empty", "worn out", "checked out", "heavy"]
+        default: []
+        }
+    }
+
     /// Interpolated color along the 5-stop scale (5 -> 1 maps to top -> bottom).
     static func color(for value: Double) -> Color {
         let v = max(1.0, min(5.0, value))
