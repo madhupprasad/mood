@@ -6,6 +6,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -38,10 +40,12 @@ import com.tapasya.mood.ui.theme.InkPrimary
 import com.tapasya.mood.ui.theme.InkSecondary
 import com.tapasya.mood.ui.theme.Line
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun WriteScreen(store: MoodStore, modifier: Modifier = Modifier) {
     var note by remember { mutableStateOf("") }
     var selectedMood by remember { mutableStateOf<Int?>(null) }
+    var selectedEmotions by remember { mutableStateOf(setOf<String>()) }
 
     Column(
         modifier = modifier
@@ -67,7 +71,11 @@ fun WriteScreen(store: MoodStore, modifier: Modifier = Modifier) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.clickable {
-                        selectedMood = if (active) null else level.value
+                        val newValue = if (active) null else level.value
+                        // Feelings are scoped to a mood level, so changing or
+                        // clearing the mood clears the chosen feelings.
+                        if (newValue != selectedMood) selectedEmotions = emptySet()
+                        selectedMood = newValue
                     }
                 ) {
                     Box(
@@ -94,6 +102,46 @@ fun WriteScreen(store: MoodStore, modifier: Modifier = Modifier) {
             }
         }
 
+        // Optional feeling chips — appear once a mood is chosen, scoped to it.
+        selectedMood?.let { mv ->
+            val color = Color(MoodLevel.forValue(mv)?.colorArgb ?: 0xFF888888)
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(
+                    text = "FEELING",
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = InkSecondary
+                )
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    MoodLevel.emotionsFor(mv).forEach { emotion ->
+                        val on = emotion in selectedEmotions
+                        Text(
+                            text = emotion,
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = if (on) color else InkSecondary,
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .background(if (on) color.copy(alpha = 0.15f) else Line.copy(alpha = 0.4f))
+                                .border(
+                                    1.dp,
+                                    if (on) color.copy(alpha = 0.5f) else Color.Transparent,
+                                    CircleShape
+                                )
+                                .clickable {
+                                    selectedEmotions =
+                                        if (on) selectedEmotions - emotion else selectedEmotions + emotion
+                                }
+                                .padding(horizontal = 12.dp, vertical = 6.dp)
+                        )
+                    }
+                }
+            }
+        }
+
         OutlinedTextField(
             value = note,
             onValueChange = { note = it },
@@ -111,9 +159,10 @@ fun WriteScreen(store: MoodStore, modifier: Modifier = Modifier) {
 
         Button(
             onClick = {
-                store.add(note.trim(), selectedMood)
+                store.add(note.trim(), selectedMood, selectedEmotions.toList())
                 note = ""
                 selectedMood = null
+                selectedEmotions = emptySet()
             },
             enabled = selectedMood != null,
             modifier = Modifier

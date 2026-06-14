@@ -19,7 +19,8 @@ data class MoodEntry(
     val id: String = UUID.randomUUID().toString(),
     val mood: String,
     val date: Long,
-    val moodValue: Int? = null
+    val moodValue: Int? = null,
+    val emotions: List<String> = emptyList()
 )
 
 /** The 1–5 mood scale, colours pulled from the Apple app's MoodLevel. */
@@ -38,6 +39,20 @@ data class MoodLevel(
         )
 
         fun forValue(v: Int?): MoodLevel? = all.firstOrNull { it.value == v }
+
+        /**
+         * Optional, warm-toned feeling words for each mood level. The level you
+         * already picked is the "category", so naming the feeling is one quick
+         * optional tap — mirrors MoodLevel.emotions(for:) on the Apple app.
+         */
+        fun emotionsFor(value: Int): List<String> = when (value) {
+            5 -> listOf("grateful", "proud", "excited", "joyful", "alive")
+            4 -> listOf("content", "relieved", "rested", "connected", "hopeful")
+            3 -> listOf("okay", "neutral", "focused", "present", "steady")
+            2 -> listOf("sad", "anxious", "frustrated", "lonely", "discouraged")
+            1 -> listOf("numb", "empty", "worn out", "checked out", "heavy")
+            else -> emptyList()
+        }
     }
 }
 
@@ -55,8 +70,8 @@ class MoodStore(context: Context) {
         load()
     }
 
-    fun add(mood: String, moodValue: Int?) {
-        entries.add(0, MoodEntry(mood = mood, date = System.currentTimeMillis(), moodValue = moodValue))
+    fun add(mood: String, moodValue: Int?, emotions: List<String> = emptyList()) {
+        entries.add(0, MoodEntry(mood = mood, date = System.currentTimeMillis(), moodValue = moodValue, emotions = emotions))
         save()
     }
 
