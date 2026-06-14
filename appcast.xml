@@ -11,6 +11,15 @@
     <description>Updates for mood</description>
     <language>en</language>
     <item>
+    <title>Version 1.8</title>
+    <pubDate>Sun, 14 Jun 2026 10:01:13 +0000</pubDate>
+    <sparkle:version>1.8</sparkle:version>
+    <sparkle:shortVersionString>1.8</sparkle:shortVersionString>
+    <sparkle:minimumSystemVersion>26.5</sparkle:minimumSystemVersion>
+    <description><![CDATA[Name the feeling. After you pick a mood, optional feeling words now appear — tap any that fit, or skip them. They show up in your entries and help Chat understand you better.]]></description>
+    <enclosure url="https://github.com/madhupprasad/mood/releases/download/v1.8/mood-1.8.zip" type="application/octet-stream" sparkle:edSignature="yqktqsN1FJjXn8W6WLuv8OmA54oAc8oYoyYkxKSMWK/xw2OoRKEg4zX83WvxlwRHA71i3KDdjOfsENoi0MvrCQ==" length="1811565"/>
+    </item>
+    <item>
     <title>Version 1.7</title>
     <pubDate>Fri, 12 Jun 2026 08:56:10 +0000</pubDate>
     <sparkle:version>1.7</sparkle:version>
