@@ -1,20 +1,22 @@
 # mood
 
-> a tiny journal. cream-colored, mostly text, hard to feel bad in. macOS today — iOS and Android on the way.
+> a tiny journal. cream-colored, mostly text, hard to feel bad in. macOS and Android today — iOS on the way.
 
-[**Website**](https://madhupprasad.github.io/mood/) · [**Download for macOS**](https://github.com/madhupprasad/mood/releases/latest) · macOS 26.5 (Tahoe) or later
+[**Website**](https://madhupprasad.github.io/mood/) · [**Download for macOS**](https://github.com/madhupprasad/mood/releases/latest) · [**Download for Android**](https://github.com/madhupprasad/mood/releases/download/android-v1.0/mood-1.0.apk)
 
 I wanted somewhere small to type into about how I was feeling. Not a tracker. Not a daily prompt. Not a calendar with a streak that yells at me. A blinking cursor and a Return key. So I built one. mood is what I made.
 
 ## Platforms
 
-mood started on macOS and is growing into your pocket. The macOS app is the released one; the mobile apps are in development and build from source today. All three share the same idea and the same plain-JSON storage, but each fits its platform.
+mood started on macOS and is growing into your pocket. macOS is the polished, auto-updating release; Android has a first sideload build; iOS builds from source. All three share the same idea and the same plain-JSON storage, but each fits its platform.
 
 | Platform | Status | How to get it |
 |---|---|---|
 | **macOS** 26.5+ | Released | [Download](https://github.com/madhupprasad/mood/releases/latest) |
+| **Android** 8.0+ (API 26) | Beta (sideload) | [Download the APK](https://github.com/madhupprasad/mood/releases/download/android-v1.0/mood-1.0.apk) · [release notes](https://github.com/madhupprasad/mood/releases/tag/android-v1.0) |
 | **iOS** 26.5+ | In development | Build from source (Xcode) |
-| **Android** 8.0+ (API 26) | In development | Build from source (Android Studio) |
+
+**Installing the Android APK:** download it, tap the file, and when Android warns about installing from an unknown source, allow that source and tap **Install** (one-time, like macOS Gatekeeper). It's signed but not distributed through the Play Store.
 
 - **macOS** has the full kit — the `⌃⌥M` global quick-entry bar, menu-bar extra, and Sparkle in-app updates.
 - **iOS** keeps the writing, mood, trends, voice, and on-device Chat, in a Daylio-style mood-first composer. No global hotkey (the OS has none); updates come from the App Store.
