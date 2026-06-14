@@ -51,6 +51,9 @@ final class FloatingPanel: NSPanel {
 final class QuickEntryPanel {
     static let shared = QuickEntryPanel()
     private var panel: FloatingPanel?
+    /// The app that was frontmost right before we opened the panel. Used so we
+    /// can hand focus back to it on dismiss — Spotlight-style.
+    private weak var previousFrontmostApp: NSRunningApplication?
 
     func toggle() {
         if let panel, panel.isVisible {
@@ -63,9 +66,21 @@ final class QuickEntryPanel {
     func dismiss() {
         panel?.orderOut(nil)
         panel = nil
+
+        // Restore focus to whatever the user was using before we opened.
+        // Only do this if the previous app wasn't mood itself (don't fight the
+        // user if they explicitly had mood up already).
+        if let prev = previousFrontmostApp,
+           prev.bundleIdentifier != Bundle.main.bundleIdentifier {
+            prev.activate(options: [])
+        }
+        previousFrontmostApp = nil
     }
 
     private func present() {
+        // Remember whoever was in front so we can hand it back on dismiss.
+        previousFrontmostApp = NSWorkspace.shared.frontmostApplication
+
         let view = QuickEntryView { [weak self] in self?.dismiss() }
         let hosting = NSHostingView(rootView: view)
 
