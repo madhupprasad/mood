@@ -11,6 +11,15 @@
     <description>Updates for mood</description>
     <language>en</language>
     <item>
+    <title>Version 1.9</title>
+    <pubDate>Sun, 21 Jun 2026 04:38:46 +0000</pubDate>
+    <sparkle:version>1.9</sparkle:version>
+    <sparkle:shortVersionString>1.9</sparkle:shortVersionString>
+    <sparkle:minimumSystemVersion>26.5</sparkle:minimumSystemVersion>
+    <description><![CDATA[added: Line item delete]]></description>
+    <enclosure url="https://github.com/madhupprasad/mood/releases/download/v1.9/mood-1.9.zip" type="application/octet-stream" sparkle:edSignature="rf7RCmXpTy6WHTE+A20kGeIGg1GjXzDHgrJ8rHDCjKan0yyi6z2a9iw5ppGyEfXTolNZpS6r8PiEFj7FDZKuAQ==" length="1819878"/>
+    </item>
+    <item>
     <title>Version 1.8</title>
     <pubDate>Sun, 14 Jun 2026 10:01:13 +0000</pubDate>
     <sparkle:version>1.8</sparkle:version>
