@@ -17,9 +17,21 @@ struct TrendsView: View {
     let entries: [MoodEntry]
 
     @State private var range: TrendsRange = .month
+    @State private var cache = TrendsCache()
+    @State private var isScrolling = false
 
+    // `TrendsData.compute` is heavy (many Calendar calls + a 70-day heatmap).
+    // Memoize it so it only recomputes when the entries or range actually
+    // change — not on every body pass or scroll-driven re-layout, and not
+    // once per reference (body reads `data` 7×). This keeps scrolling smooth.
     private var data: TrendsData {
-        TrendsData.compute(from: entries, range: range)
+        let key = "\(range.rawValue)|\(entries.count)|"
+            + (entries.first.map { "\($0.id.uuidString):\($0.date.timeIntervalSince1970)" } ?? "-")
+        if cache.key != key {
+            cache.value = TrendsData.compute(from: entries, range: range)
+            cache.key = key
+        }
+        return cache.value ?? TrendsData.compute(from: entries, range: range)
     }
 
     var body: some View {
@@ -30,7 +42,7 @@ struct TrendsView: View {
                 StatTilesRow(data: data, range: range)
 
                 TrendsCard {
-                    MoodOverTimeCard(data: data)
+                    MoodOverTimeCard(data: data, isScrolling: isScrolling)
                 }
 
                 CardGrid {
@@ -40,7 +52,7 @@ struct TrendsView: View {
 
                 CardGrid {
                     TrendsCard { ByTagCard(data: data) }
-                    TrendsCard { ConsistencyCard(data: data) }
+                    TrendsCard { ConsistencyCard(data: data, isScrolling: isScrolling) }
                 }
             }
             .padding(.horizontal, 28)
@@ -48,7 +60,21 @@ struct TrendsView: View {
             .padding(.bottom, 34)
         }
         .background(theme.background)
+        // While scrolling, turn off the hover hit-testing in the chart and the
+        // heatmap. Otherwise content sliding under a stationary cursor fires a
+        // storm of hover callbacks that re-render those heavy views per frame.
+        .onScrollPhaseChange { _, phase in
+            let scrolling = phase != .idle
+            if scrolling != isScrolling { isScrolling = scrolling }
+        }
     }
+}
+
+/// Reference-type cache so the memoized `data` survives across body passes
+/// without re-triggering SwiftUI state invalidation.
+private final class TrendsCache {
+    var key: String = ""
+    var value: TrendsData?
 }
 
 // MARK: - Card wrapper + grid
@@ -376,6 +402,7 @@ private struct InlineSparkline: View {
 private struct MoodOverTimeCard: View {
     @Environment(\.theme) private var theme
     let data: TrendsData
+    var isScrolling: Bool = false
 
     @State private var hoverIndex: Int? = nil
 
@@ -469,9 +496,13 @@ private struct MoodOverTimeCard: View {
                                 hoverIndex = nil
                             }
                         }
+                        .allowsHitTesting(!isScrolling)
                 }
             }
             .frame(height: 260)
+            .onChange(of: isScrolling) { _, nowScrolling in
+                if nowScrolling { hoverIndex = nil }
+            }
 
             if let i = hoverIndex {
                 HoverReadout(point: data.points[i])
@@ -696,6 +727,7 @@ private struct ByTagCard: View {
 private struct ConsistencyCard: View {
     @Environment(\.theme) private var theme
     let data: TrendsData
+    var isScrolling: Bool = false
 
     @State private var hoveredCellID: Int? = nil
 
@@ -716,6 +748,10 @@ private struct ConsistencyCard: View {
                         }
                     }
                 }
+            }
+            .allowsHitTesting(!isScrolling)
+            .onChange(of: isScrolling) { _, nowScrolling in
+                if nowScrolling { hoveredCellID = nil }
             }
 
             if let id = hoveredCellID, let cell = data.heat.first(where: { $0.id == id }) {
