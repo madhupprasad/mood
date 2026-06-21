@@ -62,6 +62,11 @@ final class MoodStore {
         save()
     }
 
+    func delete(_ entry: MoodEntry) {
+        entries.removeAll { $0.id == entry.id }
+        save()
+    }
+
     func clearAll() {
         entries = []
         save()

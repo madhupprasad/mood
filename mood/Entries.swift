@@ -163,6 +163,9 @@ private struct EntryRow: View {
     @Environment(\.theme) private var theme
     let entry: MoodEntry
 
+    @State private var hovering = false
+    @State private var confirmingDelete = false
+
     var body: some View {
         let tags = extractTags(from: entry.mood)
         let body = bodyWithoutTags(entry.mood)
@@ -208,13 +211,40 @@ private struct EntryRow: View {
             }
 
             Spacer()
+
+            Button {
+                confirmingDelete = true
+            } label: {
+                Image(systemName: "trash")
+                    .font(.system(size: 11))
+                    .foregroundStyle(theme.secondary)
+                    .frame(width: 22, height: 22)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .help("Delete this entry")
+            .opacity(hovering ? 1 : 0)
         }
         .padding(.horizontal, 24)
         .padding(.vertical, 12)
+        .contentShape(Rectangle())
+        .onHover { hovering = $0 }
         .overlay(
             Rectangle().fill(theme.line.opacity(0.6)).frame(height: 1),
             alignment: .bottom
         )
+        .confirmationDialog(
+            "Delete this entry?",
+            isPresented: $confirmingDelete,
+            titleVisibility: .visible
+        ) {
+            Button("Delete", role: .destructive) {
+                MoodStore.shared.delete(entry)
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("This can't be undone.")
+        }
     }
 
     @ViewBuilder
