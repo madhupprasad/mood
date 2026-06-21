@@ -11,6 +11,15 @@
     <description>Updates for mood</description>
     <language>en</language>
     <item>
+    <title>Version 1.9.1</title>
+    <pubDate>Sun, 21 Jun 2026 09:19:43 +0000</pubDate>
+    <sparkle:version>1.9.1</sparkle:version>
+    <sparkle:shortVersionString>1.9.1</sparkle:shortVersionString>
+    <sparkle:minimumSystemVersion>26.5</sparkle:minimumSystemVersion>
+    <description><![CDATA[Smoother Trends scrolling.]]></description>
+    <enclosure url="https://github.com/madhupprasad/mood/releases/download/v1.9.1/mood-1.9.1.zip" type="application/octet-stream" sparkle:edSignature="wz/8V3vRihy8qBlZ3NKoF8Ry5MgN9UlHcKRc29t/wga6aRKccgdfwFhmG7rLXmIItrfw0JyshzFxwijLCeGSDg==" length="1826795"/>
+    </item>
+    <item>
     <title>Version 1.9</title>
     <pubDate>Sun, 21 Jun 2026 04:38:46 +0000</pubDate>
     <sparkle:version>1.9</sparkle:version>
